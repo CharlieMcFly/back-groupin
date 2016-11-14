@@ -9,9 +9,9 @@ var database = firebase.database();
 router.post('/', function(req, res){
 
   var user = {
-    name : req.body.name,
+    name : req.body.displayName,
     email : req.body.email,
-    photoUrl : req.body.photo,
+    photoUrl : req.body.photoURL,
     provider : req.body.providerId,
     uid : req.body.uid,
   };
