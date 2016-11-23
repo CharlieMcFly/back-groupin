@@ -7,25 +7,27 @@ var database = firebase.database();
  * Création de l'utilisateur : POST => /users
  */
 router.post('/', function(req, res){
-
   var user = {
-    name : req.body.displayName,
-    email : req.body.email,
-    photoUrl : req.body.photoURL,
-    provider : req.body.providerId,
-    uid : req.body.uid,
+    name: req.body.displayName,
+    email: req.body.email,
+    photoUrl: req.body.photoURL,
+    provider: req.body.providerId,
+    uid: req.body.uid,
   };
 
-  var updates = {};
-  firebase.database().ref().child('users').orderByChild('uid').equalTo(user.uid).on('value', function(snapshot) {
-    if (snapshot.val() == null) {
-      // Get a key for a new Post.
-      firebase.database().ref().child('users').push(user);
-    }
+  var userDB = firebase.database().ref().child('users').child(user.uid);
+  userDB.set(user);
+
+  firebase.database().ref().child('users').child(user.uid).once('value', function(snapshot){
+      res.send(snapshot.val());
+  })
+});
+
+router.get('/:uid', function(req, res){
+  var ref = firebase.database().ref();
+  ref.child('users').orderByChild('name').equalTo('Alex').on('child_added', function(snapshot){
+    res.sendStatus(200);
   });
-
-  res.sendStatus(200);
-
 });
 
 router.get('/', function(req, res){
