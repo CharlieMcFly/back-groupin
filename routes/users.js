@@ -12,7 +12,7 @@ router.post('/', function(req, res){
     email: req.body.email,
     photoUrl: req.body.photoURL,
     provider: req.body.providerId,
-    uid: req.body.uid,
+    uid: req.body.uid.replace("@", "-").replace(".","-")
   };
 
   var userDB = firebase.database().ref().child('users').child(user.uid);
