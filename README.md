@@ -12,11 +12,11 @@ Serveur REST API pour notre application platine Groupin. Ce serveur est dévelop
 
     -   POST:   /users
     {
-            "displayName"   :   "uid de la personne ayant demandé l'ajout",
-            "email" :   "uid de la personne ayant reçue la demande d'ajout"
-            "photoURL"  :   "uid de la personne ayant reçue la demande d'ajout"
-            "providerId"    :   "uid de la personne ayant reçue la demande d'ajout"
-            "uid"   :   "uid de la personne ayant reçue la demande d'ajout"
+            "displayName"   :   "username de l'utilisateur",
+            "email"         :   "email de l'utilisateur"
+            "photoURL"      :   "url de la photo"
+            "providerId"    :   "nom de la provenance des infos (facebook, google, autre)"
+            "uid"           :   "uid de l'utilisateur"
     }
     -   GET:    /users/:uid
 
