@@ -8,13 +8,6 @@ var database = firebase.database();
  */
 router.post('/', function(req, res){
 
-  /*var user = {
-    name: req.body.displayName,
-    email: req.body.email,
-    photoUrl: req.body.photoURL,
-    provider: req.body.providerId,
-    uid: req.body.uid.replace("@", "-").replace(".","-"),
-  };*/
   var uid = req.body.uid.replace("@", "-").replace(".","-");
   req.body.uid = uid;
 
@@ -26,15 +19,23 @@ router.post('/', function(req, res){
   })
 });
 
+/**
+ *  Récupération de l'utilisateur : GET => /users/:uid
+ */
 router.get('/:uid', function(req, res){
-  var ref = firebase.database().ref();
-  ref.child('users').orderByChild('name').equalTo('Alex').on('child_added', function(snapshot){
-    res.sendStatus(200);
-  });
+  firebase.database().ref().child('users').child(req.params.uid).once('value', function(snapshot){
+    res.send(snapshot.val());
+  })
 });
 
+/**
+ * Récupération de tous les utilisateurs : GET => /users
+ */
 router.get('/', function(req, res){
-  res.sendStatus(200);
+  firebase.database().ref().child('users').once('value', function(snapshot){
+    res.send(snapshot.val());
+  })
+
 });
 
 module.exports = router;
