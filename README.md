@@ -4,27 +4,52 @@ Serveur REST API pour notre application platine Groupin. Ce serveur est dévelop
 
     -   NodeJs
     -   ExpressJS
-    -   MongoDB
-    -   Mongoose
-    -   Passport
+    -   Firebase
 
-## Usecases
+## API REST
 
-### S'authentifier
+### USERS
 
-Pour s'authentifier nous avons laisser différentes API pour le client.
+    -   POST:   /users
+    {
+            "displayName"   :   "uid de la personne ayant demandé l'ajout",
+            "email" :   "uid de la personne ayant reçue la demande d'ajout"
+            "photoURL"  :   "uid de la personne ayant reçue la demande d'ajout"
+            "providerId"    :   "uid de la personne ayant reçue la demande d'ajout"
+            "uid"   :   "uid de la personne ayant reçue la demande d'ajout"
+    }
+    -   GET:    /users/:uid
 
-#### POST
-- /signup -> pour l'enregistrement avec email & password
-- /login -> pour se connecter avec email & password
+    :uid    est l'uid de l'utilisateur
 
-Arguments du post
-{
-    "email" : "mon email",
-    "password" : "mon password"
-}
+    -   GET:    /users
 
-#### GET
-- /auth/facebook -> pour se connecter avec facebook
-- /auth/google -> pour se connecter avec google
-- /profile -> pour récupérer les informations de la personne authentifié
+
+### FRIENDS
+
+    -   POST:   /friends
+    {
+        "uidD"  :   "uid de la personne ayant demandé l'ajout",
+        "uidR"  :   "uid de la personne ayant reçue la demande d'ajout"
+    }
+    -   GET:    /friends/:uid
+
+        :uid    est l'utilisateur
+
+### NOTIFICATIONS
+
+    -   POST:   /notifications_amis
+    {
+            "uidD"  :   "uid de la personne ayant demandé l'ajout",
+            "uidR"  :   "uid de la personne ayant reçue la demande d'ajout"
+    }
+    -   GET:    /notifications_amis/:uid
+
+    :uid    est l'uid de l'utilisateur
+
+    -   GET:    /notifications_amis/:uid/:ami
+
+    :uid    est l'uid de l'utilisateur
+    :ami    est l'uid de l'ami qui a fait la demande d'ajout
+
+    Remarque : Cette dernière sert uniquement pour la suppression de la notificiation sans ajout d'amis
