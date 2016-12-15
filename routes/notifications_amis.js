@@ -7,10 +7,6 @@ var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
 var notifiAmisDB = database.ref().child('notifications').child('amis');
 
-router.get('/', function(req, res){
-   res.sendStatus(200);
-});
-
 /**
  * Ajout d'une notification pour l'amis que l'on a invité
  */
@@ -31,15 +27,18 @@ router.post('/', function(req, res){
  */
 router.get('/:uid', function(req, res){
     notifiAmisDB.child(req.params.uid).once('value', function(snapshot){
-        res.send(snapshot.val());
+        var n = {"notifs" : snapshot.val()};
+        res.send(n);
+
     })
 });
 
 /**
  * Suppression d'une notification une fois valider
  */
-router.get('/:uid/:ami', function(req, res){
+router.delete('/:uid/:ami', function(req, res){
     notifiAmisDB.child(req.params.uid).child(req.params.ami).remove();
+    notifiAmisDB.child(req.params.ami).child(req.params.uid).remove();
     res.sendStatus(200);
 });
 

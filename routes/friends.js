@@ -21,9 +21,6 @@ router.post('/', function(req, res){
     usersDB.child(uidR).child('friends').child(uidD).set(true);
     usersDB.child(uidD).child('friends').child(uidR).set(true);
 
-    // suppression de la notification
-    notifAmisDB.child(uidR).child(uidD).remove();
-
     res.sendStatus(200);
 });
 
@@ -35,10 +32,9 @@ router.get('/:uid', function(req, res){
     var uid = req.params.uid;
 
     usersDB.child(uid).child('friends').once('value', function(snapshot){
-       if(snapshot.val())
-           res.send(snapshot.val());
-       else
-           res.send({});
+        var f = {"friends" : snapshot.val()};
+        res.send(f);
+
     })
 
 });

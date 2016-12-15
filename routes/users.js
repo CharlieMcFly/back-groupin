@@ -19,7 +19,8 @@ router.post('/', function(req, res){
   userDB.child(uid).child('uid').set(req.body.uid);
 
   userDB.child(uid).once('value', function(snapshot){
-      res.send(snapshot.val());
+      var users =  {"user" : snapshot.val()};
+      res.send(users);
   })
 });
 
@@ -27,8 +28,9 @@ router.post('/', function(req, res){
  *  Récupération de l'utilisateur : GET => /users/:uid
  */
 router.get('/:uid', function(req, res){
-  firebase.database().ref().child('users').child(req.params.uid).once('value', function(snapshot){
-    res.send(snapshot.val());
+  userDB.child(req.params.uid).once('value', function(snapshot){
+      var users =  {"user" : snapshot.val()};
+      res.send(users);
   })
 });
 
@@ -36,10 +38,21 @@ router.get('/:uid', function(req, res){
  * Récupération de tous les utilisateurs : GET => /users
  */
 router.get('/', function(req, res){
-  firebase.database().ref().child('users').once('value', function(snapshot){
-    res.send(snapshot.val());
+  userDB.once('value', function(snapshot){
+    var users =  {"users" : snapshot.val()};
+
+    res.send(users);
   })
 
+});
+
+
+/**
+ * Suppression d'un user
+ */
+router.delete('/:uid', function(req, res){
+    userDB.child(req.params.uid).remove();
+    res.sendStatus(200);
 });
 
 module.exports = router;
