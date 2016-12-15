@@ -17,4 +17,13 @@ describe('Index', function() {
                done();
             });
     });
+
+    it('should return 404 code', function(done){
+        chai.request(server)
+            .get('/badapi')
+            .end(function(err, res){
+                res.should.have.status(404);
+                done();
+            })
+    })
 });
