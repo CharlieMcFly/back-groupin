@@ -8,6 +8,26 @@ Serveur REST API pour notre application platine Groupin. Ce serveur est dévelop
     -   ExpressJS
     -   Firebase
 
+## INSTALL
+
+git clone https://github.com/CharlieMcFly/back-groupin.git
+
+npm install 
+
+### DEV MODE
+
+npm start
+
+### TEST MODE
+
+See mocha tests :
+
+- npm run mocha 
+
+See coverage tests : 
+
+- npm run coverage
+
 ## API REST
 
 ### USERS
