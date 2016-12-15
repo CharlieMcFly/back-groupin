@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "test": "./node_modules/.bin/mocha --reporter spec test/*.js",
     "coverage": "istanbul cover _mocha",
-    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
+    "coveralls": "cat coverage/lcov.info | node_modules/.bin/coveralls"
   },
   "dependencies": {
     "body-parser": "~1.15.2",
