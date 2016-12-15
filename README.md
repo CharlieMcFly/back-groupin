@@ -1,4 +1,5 @@
-# Groupin back-end [![Build Status](https://travis-ci.org/CharlieMcFly/back-groupin.svg?branch=master)](https://travis-ci.org/CharlieMcFly/back-groupin)
+# Groupin back-end 
+[![Build Status](https://travis-ci.org/CharlieMcFly/back-groupin.svg?branch=master)](https://travis-ci.org/CharlieMcFly/back-groupin)
 [![Coverage Status](https://coveralls.io/repos/github/CharlieMcFly/back-groupin/badge.svg?branch=master)](https://coveralls.io/github/CharlieMcFly/back-groupin?branch=master)
 
 Serveur REST API pour notre application platine Groupin. Ce serveur est développé avec les technologies suivantes :
