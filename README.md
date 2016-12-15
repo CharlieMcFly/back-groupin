@@ -18,7 +18,7 @@ npm install
 
 npm start
 
-### TEST MODE
+### TEST MODE (with mocha / istanbul / coveralls)
 
 See mocha tests :
 
