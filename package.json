@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./src/bin/www",
+    "start": "node ./bin/www",
     "test": "./node_modules/.bin/mocha --reporter spec test/*.js",
     "coverage": "istanbul cover _mocha --report lcov",
     "coveralls": "cat coverage/lcov.info | node_modules/.bin/coveralls"
