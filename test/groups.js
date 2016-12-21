@@ -75,6 +75,11 @@ describe('Groups', function() {
             .delete('/groups/'+id)
             .end(function(err, res){
                 res.should.have.status(200);
+                chai.request(server)
+                    .delete('/users/uidTest')
+                    .end(function(err, res){
+                        res.should.have.status(200);
+                    });
                 done();
 
             });
