@@ -14,13 +14,13 @@ describe('Notifications Amis', function() {
     /**
      * Test si l'api enregistre bien un utilisateur ou le met à jour
      */
-    it('should add a SINGLE notifications_amis on /notifications_amis POST', function(done){
+    it('should add a SINGLE notifications/amis on /notifications/amis POST', function(done){
         var notifTest = {
             "uidD" : "testuid",
             "uidR" : "testuid2"
         }
         chai.request(server)
-            .post('/notifications_amis')
+            .post('/notifications/amis')
             .send(notifTest)
             .end(function(err, res){
                 res.should.have.status(200);
@@ -32,11 +32,11 @@ describe('Notifications Amis', function() {
     /**
      * Test si l'api recupere bien les notifs amis d'un utilisateur
      */
-    it('should list  notifications of a user on /notifications_amis/:uid GET', function(done){
+    it('should list  notifications of a user on /notifications/amis/:uid GET', function(done){
         var useruid = "testuid2";
 
         chai.request(server)
-            .get('/notifications_amis/'+useruid)
+            .get('/notifications/amis/'+useruid)
             .end(function(err, res){
                 res.should.have.status(200);
                 res.should.be.json;
@@ -52,11 +52,11 @@ describe('Notifications Amis', function() {
     /**
      * Test si l'api recupere bien les notifs amis d'un utilisateur qui n'en a pas
      */
-    it('should return null notifications of a fakeuser on /notifications_amis/:uid GET', function(done){
+    it('should return null notifications of a fakeuser on /notifications/amis/:uid GET', function(done){
         var useruid = "fakeid";
 
         chai.request(server)
-            .get('/notifications_amis/'+useruid)
+            .get('/notifications/amis/'+useruid)
             .end(function(err, res){
                 res.should.have.status(200);
                 res.should.be.json;
@@ -70,12 +70,12 @@ describe('Notifications Amis', function() {
     /**
      * Test si l'api supprime bien la notification
      */
-    it('should remove notifications of a user and another user on /notifications_amis/:uid/:ami DELETE', function(done){
+    it('should remove notifications of a user and another user on /notifications/amis/:uid/:ami DELETE', function(done){
         var useruid = "testuid2";
         var useruid2 = "testuid";
 
         chai.request(server)
-            .delete('/notifications_amis/'+useruid+'/'+ useruid2)
+            .delete('/notifications/users/'+useruid+'/friends/'+ useruid2)
             .end(function(err, res){
                 res.should.have.status(200);
                 done();

@@ -55,4 +55,25 @@ router.delete('/:uid', function(req, res){
     res.sendStatus(200);
 });
 
+//// FRIENDS
+
+/**
+ * Ajout d'un amis à l'utilisateur => POST : /friends
+ */
+router.post('/friends', function(req, res){
+    // uid de l'utilisateurs demandant l'ajout d'amis
+    var uidD = req.body.uidD;
+    // uid de l'utilisateurs recevant l'ajout d'amis
+    var uidR = req.body.uidR;
+
+    // ajout de l'amis
+    usersDB.child(uidR).child('friends').child(uidD).set(true);
+    console.log("first");
+    usersDB.child(uidD).child('friends').child(uidR).set(true);
+    console.log("ADDED");
+
+
+    res.sendStatus(200);
+});
+
 module.exports = router;

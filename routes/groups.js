@@ -63,6 +63,19 @@ router.delete('/:key', function(req, res){
 
 });
 
+
+//// EVENTS
+
+router.get('/:uid/events', function(req, res){
+
+    groupsDB.child(req.params.uid).child('events').once('value', function(snapshot){
+        var g = {"events" : snapshot.val()};
+        res.send(g);
+    });
+
+});
+
+
 module.exports = router;
 
 

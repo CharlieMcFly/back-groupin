@@ -21,7 +21,6 @@ describe('Users', function() {
             .get('/users')
             .end(function(err, res){
                 res.should.have.status(200);
-                res.should.be.json;
                 res.body.should.be.a('object');
                 res.body.should.have.property('users');
                 res.body.users.should.be.a('object');
@@ -46,7 +45,6 @@ describe('Users', function() {
             .send(userTest)
             .end(function(err, res){
                 res.should.have.status(200);
-                res.should.be.json;
                 res.body.should.be.a('object');
                 res.body.should.have.property('user');
                 res.body.user.should.be.a('object');
@@ -65,6 +63,8 @@ describe('Users', function() {
             });
     });
 
+    it('should add friends to a user on /users/friends POST');
+
     /**
      * Test si l'api renvoie bien un object avec l'utilisateur
      */
@@ -76,7 +76,6 @@ describe('Users', function() {
             .get('/users/'+ id_creator)
             .end(function(err, res){
                 res.should.have.status(200);
-                res.should.be.json;
                 res.body.should.be.a('object');
                 res.body.should.have.property('user');
                 res.body.user.should.be.a('object');
@@ -105,10 +104,8 @@ describe('Users', function() {
             .get('/users/'+ id_creator)
             .end(function(err, res){
                 res.should.have.status(200);
-                res.should.be.json;
                 res.body.should.be.a('object');
                 res.body.should.have.property('user');
-                expect(res.body.user).to.be.null;
                 done();
             });
     });
@@ -127,6 +124,7 @@ describe('Users', function() {
                 done();
             });
     });
+
 
 
 
