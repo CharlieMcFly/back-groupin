@@ -5,10 +5,9 @@ var express = require('express');
 var router = express.Router();
 var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
-var usersDB = database.ref().child('users');
 var eventsDB = database.ref().child('events');
 var groupsDB = database.ref().child('groups');
-var userDB = database.ref().child('users');
+var usersDB = database.ref().child('users');
 
 /**
  * Renvoie tous les events
@@ -45,6 +44,7 @@ router.post('/', function(req, res) {
     }
 
     eventsDB.child(key).child("nom").set(req.body.nom);
+    eventsDB.child(key).child("createur").set(req.body.userId);
     eventsDB.child(key).child("description").set(req.body.description);
     eventsDB.child(key).child("photoURL").set(req.body.photoURL);
     eventsDB.child(key).child("dateDebut").set(req.body.dateDebut);
@@ -55,23 +55,64 @@ router.post('/', function(req, res) {
 
     groupsDB.child(req.body.groupId).child("events").child(key).set(true);
 
-    userDB.child(req.body.userId).child("events").child(key).set(true);
+    usersDB.child(req.body.userId).child("events").child(key).set(true);
 
 
-    eventsDB.child(key).once('value', function(snapshot){
-        var e = {"event" : snapshot.val()};
-        res.send(e);
-    })
+    eventsDB.once('value', function(snapshot){
+        var e = snapshot.val();
+        groupsDB.once("value", function(s){
+            var g = s.val();
+            usersDB.child(req.body.userId).once("value", function(snap) {
+                var u = snap.val();
+                var r = {
+                    "events": e,
+                    "user": u,
+                    "groups": g
+                };
+                res.send(r);
+            });
+        });
+    });
 });
 
 
 /**
  * Supprime un event
  */
-router.delete('/:key', function(req, res){
+router.delete('/:key/groups/:groupid/users/:uid', function(req, res){
 
-    eventsDB.child(req.params.key).remove();
-    res.sendStatus(200);
+    var eventId = req.params.key;
+    var groupid = req.params.groupid;
+    var uid = req.params.uid;
+
+    eventsDB.child(eventId).child('participants').once("value", function(snapshot){
+       var p = snapshot.val();
+       if(p == null){
+           groupsDB.child(groupid).child('events').child(eventId).remove();
+           eventsDB.child(eventId).remove();
+       }else{
+           Object.keys(p).forEach(function(key, index){
+               usersDB.child(key).child('events').child(eventId).remove();
+           });
+           groupsDB.child(groupid).child('events').child(eventId).remove();
+           eventsDB.child(eventId).remove();
+       }
+        eventsDB.once('value', function(snapshot){
+            var e = snapshot.val();
+            groupsDB.once("value", function(s){
+                var g = s.val();
+                usersDB.child(uid).once("value", function(snap) {
+                    var u = snap.val();
+                    var r = {
+                        "events": e,
+                        "user": u,
+                        "groups": g
+                    };
+                    res.send(r);
+                });
+            });
+        });
+    });
 
 });
 

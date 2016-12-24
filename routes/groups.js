@@ -47,9 +47,16 @@ router.post('/', function(req, res) {
     groupsDB.child(key).child("membres").child(req.body.uid).set(true);
     usersDB.child(req.body.uid).child("groups").child(key).set(true);
 
-    groupsDB.child(key).once('value', function(snapshot){
-        var g = {"group" : snapshot.val()};
-        res.send(g);
+    usersDB.child(req.body.uid).once('value', function(snapshot){
+        var user = snapshot.val();
+        groupsDB.once('value', function(s) {
+            var groups = s.val();
+            var u = {
+                "user": user,
+                "groups" : groups
+            };
+            res.send(u);
+        });
     })
 });
 
@@ -60,18 +67,6 @@ router.delete('/:key', function(req, res){
 
     groupsDB.child(req.params.key).remove();
     res.sendStatus(200);
-
-});
-
-
-//// EVENTS
-
-router.get('/:uid/events', function(req, res){
-
-    groupsDB.child(req.params.uid).child('events').once('value', function(snapshot){
-        var g = {"events" : snapshot.val()};
-        res.send(g);
-    });
 
 });
 
