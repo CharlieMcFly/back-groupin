@@ -23,9 +23,11 @@ router.post('/', function(req, res){
   userDB.child(uid).child('uid').set(req.body.uid);
 
   userDB.child(uid).once('value', function(snapshot){
-      var user =  {"user" : snapshot.val()};
+      var user =  snapshot.val();
       res.send(user);
-  })
+
+  });
+
 });
 
 /**
@@ -126,7 +128,7 @@ router.delete('/:uid/groups/:id', function(req, res){
     groupDB.child(idgroup).child('membres').child(uid).remove();
 
     groupDB.child(idgroup).child('membres').once('value', function(snapshot){
-       if(snapshot.val() == null){
+       if(snapshot.val()){
            groupDB.child(idgroup).child("events").once("value", function(snap){
                var e = snap.val();
                Object.keys(e).forEach(function(key,index){

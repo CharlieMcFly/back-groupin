@@ -40,7 +40,7 @@ router.get('/:uid', function(req, res){
                     "notifsAmis" : nAmis,
                     "notifsGroupes" : nGroupes
                 };
-                res.send(n);
+                res.send(n);module.exports = router;
             });
 
     })
@@ -68,7 +68,7 @@ router.post('/groups/', function(req, res){
     // uid de l'utilisateurs recevant l'ajout d'amis
     var uidR = req.body.uidR;
 
-    // Ajout d'une notification amis
+    // Ajout d'un user dans un groupe
     notifiGroupesDB.child(uidR).child(idG).set(true);
     res.sendStatus(200);
 

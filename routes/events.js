@@ -75,7 +75,6 @@ router.post('/', function(req, res) {
     });
 });
 
-
 /**
  * Supprime un event
  */
@@ -111,6 +110,32 @@ router.delete('/:key/groups/:groupid/users/:uid', function(req, res){
                     res.send(r);
                 });
             });
+        });
+    });
+
+});
+
+/**
+ * Ajout l'user à l'évent
+ */
+router.post('/participants', function(req, res){
+
+    var uid = req.body.uid;
+    var event = req.body.event;
+    var participe = req.body.participe;
+
+    usersDB.child(uid).child('events').child(event).set(participe);
+    eventsDB.child(event).child('participants').child(uid).set(participe);
+
+    eventsDB.once('value', function(snapshot){
+        var e = snapshot.val();
+        usersDB.child(uid).once("value", function(snap) {
+            var u = snap.val();
+            var r = {
+                "events": e,
+                "user": u
+            };
+            res.send(r);
         });
     });
 

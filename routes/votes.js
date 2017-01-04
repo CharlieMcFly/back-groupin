@@ -6,6 +6,7 @@ var router = express.Router();
 var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
 var eventsDB = database.ref().child('events');
+var usersDB = database.ref().child('users');
 var groupsDB = database.ref().child('groups');
 var voteDB = database.ref().child('votes');
 
@@ -40,30 +41,89 @@ router.post('/', function(req, res) {
     if (key == undefined){
         key = voteDB.push().key;
         voteDB.child(key).child("id").set(key);
+        voteDB.child(key).child("createur").set(req.body.createur);
+
     }
 
-    voteDB.child(key).child("question").set(req.body.nom);
-    voteDB.child(key).child("type").set(req.body.description);
-    voteDB.child(key).child("choix").set(req.body.photoURL);
-    voteDB.child(key).child("reponses").set(req.body.dateDebut);
+    var groupId = req.body.group;
 
-    groupsDB.child(req.body.groupId).child("votes").child(key).set(true);
-    eventsDB.child(req.body.eventId).child("votes").child(key).set(true);
+    voteDB.child(key).child("question").set(req.body.question);
+    var choices = req.body.choix;
+    for(var c in choices) {
+        voteDB.child(key).child("choix").child(choices[c].choix).set(0);
+    }
 
-    voteDB.child(key).once('value', function(snapshot){
-        var e = {"vote" : snapshot.val()};
-        res.send(e);
-    })
+    groupsDB.child(groupId).child("votes").child(key).set(true);
+
+    voteDB.once('value', function(snapshot){
+        var votes = snapshot.val();
+        groupsDB.once("value", function(snap){
+            var groups = snap.val();
+            var e = {"votes" : votes, "groups" : groups};
+            res.send(e);
+        });
+    });
+});
+
+router.post('/users', function(req, res){
+
+    var idVotes = req.body.idVote;
+    var uid = req.body.uid;
+    var reponse = req.body.reponse;
+
+    var adejavote = false;
+
+    voteDB.child(idVotes).child("a_vote").once("value", function(snap){
+
+        snap.forEach(function(child){
+           if(child.key == uid){
+               adejavote = true;
+           }
+        });
+
+        if(!adejavote){
+            voteDB.child(idVotes).child("a_vote").child(uid).set(true);
+            voteDB.child(idVotes).child("choix").child(reponse).once('value', function(vote){
+                var nbv = vote.val();
+                nbv = nbv + 1 ;
+                voteDB.child(idVotes).child("choix").child(reponse).set(nbv);
+
+            });
+        }
+
+    });
+
+    voteDB.once('value', function(snapshot){
+        var votes = snapshot.val();
+        groupsDB.once("value", function(snap){
+            var groups = snap.val();
+            var e = {"votes" : votes, "groups" : groups};
+            res.send(e);
+        });
+    });
+
 });
 
 
 /**
  * Supprime un event
  */
-router.delete('/:key', function(req, res){
+router.delete('/:id/users/:uid', function(req, res){
 
-    voteDB.child(req.params.key).remove();
-    res.sendStatus(200);
+    var idVote = req.params.id;
+    var uid = req.params.uid;
+
+    usersDB.child(uid).child("votes").child(idVote).remove();
+    voteDB.child(idVote).remove();
+
+    voteDB.once('value', function(snapshot){
+        var votes = snapshot.val();
+        groupsDB.once("value", function(snap){
+            var groups = snap.val();
+            var e = {"votes" : votes, "groups" : groups};
+            res.send(e);
+        });
+    });
 
 });
 

@@ -10,6 +10,8 @@ var users = require('./routes/users');
 var notifications = require('./routes/notifications');
 var groups = require('./routes/groups');
 var events = require('./routes/events');
+var votes = require('./routes/votes');
+var chats = require('./routes/chats');
 
 var app = express();
 
@@ -36,6 +38,8 @@ app.use('/users', users);
 app.use('/notifications', notifications);
 app.use('/groups', groups);
 app.use('/events', events);
+app.use('/votes', votes);
+app.use('/chats', chats);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
