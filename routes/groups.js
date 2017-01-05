@@ -11,18 +11,6 @@ var groupDB = database.ref().child('groups');
 // ALL OK NEED TESTS 4/01/2017
 
 /**
- * Renvoie tous les groupes
- */
-router.get('/', function(req, res){
-
-    groupDB.once('value', function(snapshot){
-        var g = {"groups" : snapshot.val()};
-        res.send(g);
-    })
-
-});
-
-/**
  * Renvoie les groupes d'un utilisateur
  */
 router.get('/:uid', function(req, res){

@@ -142,44 +142,36 @@ router.delete('/:uid/groups/:id', function(req, res){
                     userDB.child(uid).child("events").child(key).remove();
                     eventDB.child(key).remove();
                 });
-                groupDB.child(idgroup).remove();
-                returnAfterDelete(uid);
             });
-
-         // Sinon
-        }else{
-            returnAfterDelete(uid);
         }
     });
 
-    function returnAfterDelete(uid){
-        // Renvoie le user et ses groupes
-        userDB.child(uid).once('value', function(user){
-            groupDB.once('value', function(groups){
-                var all_groups = groups.val();
-                var groupsRes = [];
-                if(all_groups){
-                    var my_user = user.val();
-                    if(my_user){
-                        if(my_user.groups){
-                            for(var g in my_user.groups){
-                                if(all_groups[g]){
-                                    groupsRes.push(all_groups[g]);
-                                }
+    groupDB.child(idgroup).remove();
+
+    // Renvoie le user et ses groupes
+    userDB.child(uid).once('value', function(user){
+        groupDB.once('value', function(groups){
+            var all_groups = groups.val();
+            var groupsRes = [];
+            if(all_groups){
+                var my_user = user.val();
+                if(my_user){
+                    if(my_user.groups){
+                        for(var g in my_user.groups){
+                            if(all_groups[g]){
+                                groupsRes.push(all_groups[g]);
                             }
                         }
                     }
                 }
-                var result = {
-                    "groups" : groupsRes,
-                    "user" : my_user
-                };
-                res.send(result);
-            });
+            }
+            var result = {
+                "groups" : groupsRes,
+                "user" : my_user
+            };
+            res.send(result);
         });
-    }
-
-
+    });
 
 });
 
