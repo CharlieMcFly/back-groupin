@@ -5,15 +5,17 @@ var express = require('express');
 var router = express.Router();
 var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
-var usersDB = database.ref().child('users');
-var groupsDB = database.ref().child('groups');
+var userDB = database.ref().child('users');
+var groupDB = database.ref().child('groups');
+
+// ALL OK NEED TESTS 4/01/2017
 
 /**
  * Renvoie tous les groupes
  */
 router.get('/', function(req, res){
 
-    groupsDB.once('value', function(snapshot){
+    groupDB.once('value', function(snapshot){
         var g = {"groups" : snapshot.val()};
         res.send(g);
     })
@@ -21,53 +23,75 @@ router.get('/', function(req, res){
 });
 
 /**
- * Renvoie un groupe en particulier
+ * Renvoie les groupes d'un utilisateur
  */
-router.get('/:key', function(req, res){
-    groupsDB.child(req.params.key).once('value', function(snapshot){
-        var g = {"group" : snapshot.val()};
-        res.send(g);
-    })
+router.get('/:uid', function(req, res){
+    userDB.child(req.params.uid).once('value', function(user){
+        groupDB.once('value', function(groups){
+            var all_groups = groups.val();
+            var groupsRes = [];
+            if(all_groups){
+                var my_user = user.val();
+                if(my_user){
+                    if(my_user.groups){
+                        for(var g in my_user.groups){
+                            if(all_groups[g]){
+                                groupsRes.push(all_groups[g]);
+                            }
+                        }
+                    }
+                }
+            }
+            var result = {
+                "groups" : groupsRes
+            };
+            res.send(result);
+        });
+    });
 });
 
 /**
- * Créer et update un groupe et le renvoie
+ * Créer un groupe et le renvoie
  */
 router.post('/', function(req, res) {
 
     var key = req.body.id;
+    var uid = req.body.uid;
+
     if (key == undefined){
-        key = groupsDB.push().key;
-        groupsDB.child(key).child("id").set(key);
+        key = groupDB.push().key;
+        groupDB.child(key).child("id").set(key);
     }
 
-    groupsDB.child(key).child("nom").set(req.body.nom);
-    groupsDB.child(key).child("description").set(req.body.description);
-    groupsDB.child(key).child("photoURL").set(req.body.photoURL);
-    groupsDB.child(key).child("membres").child(req.body.uid).set(true);
-    usersDB.child(req.body.uid).child("groups").child(key).set(true);
+    groupDB.child(key).child("nom").set(req.body.nom);
+    groupDB.child(key).child("description").set(req.body.description);
+    groupDB.child(key).child("photoURL").set(req.body.photoURL);
+    groupDB.child(key).child("membres").child(uid).set(true);
+    userDB.child(uid).child("groups").child(key).set(true);
 
-    usersDB.child(req.body.uid).once('value', function(snapshot){
-        var user = snapshot.val();
-        groupsDB.once('value', function(s) {
-            var groups = s.val();
-            var u = {
-                "user": user,
-                "groups" : groups
+    userDB.child(uid).once('value', function(user){
+        groupDB.once('value', function(groups){
+            var all_groups = groups.val();
+            var groupsRes = [];
+            if(all_groups){
+                var my_user = user.val();
+                if(my_user){
+                    if(my_user.groups){
+                        for(var g in my_user.groups){
+                            if(all_groups[g]){
+                                groupsRes.push(all_groups[g]);
+                            }
+                        }
+                    }
+                }
+            }
+            var result = {
+                "user" : my_user,
+                "groups" : groupsRes
             };
-            res.send(u);
+            res.send(result);
         });
-    })
-});
-
-/**
- * Supprime un groupe
- */
-router.delete('/:key', function(req, res){
-
-    groupsDB.child(req.params.key).remove();
-    res.sendStatus(200);
-
+    });
 });
 
 

@@ -13,44 +13,48 @@ var eventDB = database.ref().child('events');
  */
 router.post('/', function(req, res){
 
-  var uid = req.body.uid.replace("@", "-").replace(".","-");
-  req.body.uid = uid;
+    var uid = req.body.uid;
 
-  userDB.child(uid).child('email').set(req.body.email);
-  userDB.child(uid).child('displayName').set(req.body.displayName);
-  userDB.child(uid).child('photoURL').set(req.body.photoURL);
-  userDB.child(uid).child('providerId').set(req.body.providerId);
-  userDB.child(uid).child('uid').set(req.body.uid);
+    if(req.body.uid_mail)
+        uid = req.body.uid_mail;
 
-  userDB.child(uid).once('value', function(snapshot){
-      var user =  snapshot.val();
-      res.send(user);
-
-  });
-
+    // Check si existe le renvoie sinon le crée
+    userDB.child(uid).once('value', function(snapshot){
+        if(snapshot.val()){
+            res.send(snapshot.val());
+        }else{
+            userDB.child(uid).child('email').set(req.body.email);
+            userDB.child(uid).child('displayName').set(req.body.displayName);
+            userDB.child(uid).child('photoURL').set(req.body.photoURL);
+            userDB.child(uid).child('providerId').set(req.body.providerId);
+            userDB.child(uid).child('uid').set(uid);
+            userDB.child(uid).once('value', function(my_user) {
+                res.send(my_user.val());
+            });
+        }
+    });
 });
 
 /**
  *  Récupération de l'utilisateur : GET => /users/:uid
  */
 router.get('/:uid', function(req, res){
-  userDB.child(req.params.uid).once('value', function(snapshot){
-      var users =  {"user" : snapshot.val()};
-      res.send(users);
-  })
+    userDB.child(req.params.uid).once('value', function(snapshot){
+        var user =  {"user" : snapshot.val()};
+        res.send(user);
+    })
 });
 
 /**
  * Récupération de tous les utilisateurs : GET => /users
  */
 router.get('/', function(req, res){
-  userDB.once('value', function(snapshot){
-    var users =  {"users" : snapshot.val()};
-    res.send(users);
-  })
+    userDB.once('value', function(snapshot){
+        var users =  {"users" : snapshot.val()};
+        res.send(users);
+    })
 
 });
-
 
 /**
  * Suppression d'un user
@@ -111,6 +115,8 @@ router.post('/groups', function(req, res){
 });
 
 /**
+ * Quitter un groupe
+ *
  * Supprimer :
  *      - l'utilisateur du groupe
  *      - le groupe de l'utilisateur
@@ -128,26 +134,50 @@ router.delete('/:uid/groups/:id', function(req, res){
     groupDB.child(idgroup).child('membres').child(uid).remove();
 
     groupDB.child(idgroup).child('membres').once('value', function(snapshot){
-       if(snapshot.val()){
-           groupDB.child(idgroup).child("events").once("value", function(snap){
-               var e = snap.val();
-               Object.keys(e).forEach(function(key,index){
-                   userDB.child(uid).child("events").child(key).remove();
-                   eventDB.child(key).remove();
-               });
-               groupDB.child(idgroup).remove();
-               userDB.child(uid).once('value', function(snapshot){
-                   var u = {"user" : snapshot.val()};
-                   res.send(u);
-               });
-           });
-       }else{
-           userDB.child(uid).once('value', function(snapshot){
-               var u = {"user" : snapshot.val()};
-               res.send(u);
-           });
-       }
+        // check s'il y a des membres si pas delete all event vote chat ect
+        if(snapshot.val()){
+            groupDB.child(idgroup).child("events").once("value", function(snap){
+                var e = snap.val();
+                Object.keys(e).forEach(function(key){
+                    userDB.child(uid).child("events").child(key).remove();
+                    eventDB.child(key).remove();
+                });
+                groupDB.child(idgroup).remove();
+                returnAfterDelete(uid);
+            });
+
+         // Sinon
+        }else{
+            returnAfterDelete(uid);
+        }
     });
+
+    function returnAfterDelete(uid){
+        // Renvoie le user et ses groupes
+        userDB.child(uid).once('value', function(user){
+            groupDB.once('value', function(groups){
+                var all_groups = groups.val();
+                var groupsRes = [];
+                if(all_groups){
+                    var my_user = user.val();
+                    if(my_user){
+                        if(my_user.groups){
+                            for(var g in my_user.groups){
+                                if(all_groups[g]){
+                                    groupsRes.push(all_groups[g]);
+                                }
+                            }
+                        }
+                    }
+                }
+                var result = {
+                    "groups" : groupsRes,
+                    "user" : my_user
+                };
+                res.send(result);
+            });
+        });
+    }
 
 
 
