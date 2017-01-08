@@ -5,35 +5,50 @@ var express = require('express');
 var router = express.Router();
 var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
-var eventsDB = database.ref().child('events');
-var usersDB = database.ref().child('users');
-var groupsDB = database.ref().child('groups');
+var eventDB = database.ref().child('events');
+var userDB = database.ref().child('users');
+var groupDB = database.ref().child('groups');
 var voteDB = database.ref().child('votes');
 
 /**
- * Renvoie tous les votes
+ * Renvoie les votes d'un groupe
  */
-router.get('/', function(req, res){
+router.get('/users/:uid/groups/:key', function(req, res){
+    
+    var uid = req.params.uid;
+    var groupid = req.params.key;
+    
+    voteDB.once('value', function(votes){
+       userDB.child(uid).once("value", function(user){
+          groupDB.child(groupid).once("value", function(group){
+              var all_votes = votes.val();
+              var my_user = user.val();
+              var my_group = group.val();
+              var tabVotes = [];
+              if(my_group){
+                  if(all_votes){
+                     if(my_group.votes){
+                         for(var v in my_group.votes){
+                             if(all_votes[v]){
+                                 tabVotes.push(all_votes[v]);
+                             }
+                         }
+                     }
+                  }
+              }
+              var result = {
+                  "user": my_user,
+                  "votes": tabVotes
+              };
+              res.send(result);
 
-    voteDB.once('value', function(snapshot){
-        var v = {"votes" : snapshot.val()};
-        res.send(v);
-    })
-
+          });
+       });
+    });
 });
 
 /**
- * Renvoie un vote en particulier
- */
-router.get('/:key', function(req, res){
-    voteDB.child(req.params.key).once('value', function(snapshot){
-        var g = {"vote" : snapshot.val()};
-        res.send(g);
-    })
-});
-
-/**
- * Créer et update un vote et le renvoie
+ * Créer un vote et le renvoie
  */
 router.post('/', function(req, res) {
 
@@ -53,11 +68,11 @@ router.post('/', function(req, res) {
         voteDB.child(key).child("choix").child(choices[c].choix).set(0);
     }
 
-    groupsDB.child(groupId).child("votes").child(key).set(true);
+    groupDB.child(groupId).child("votes").child(key).set(true);
 
     voteDB.once('value', function(snapshot){
         var votes = snapshot.val();
-        groupsDB.once("value", function(snap){
+        groupDB.once("value", function(snap){
             var groups = snap.val();
             var e = {"votes" : votes, "groups" : groups};
             res.send(e);
@@ -95,7 +110,7 @@ router.post('/users', function(req, res){
 
     voteDB.once('value', function(snapshot){
         var votes = snapshot.val();
-        groupsDB.once("value", function(snap){
+        groupDB.once("value", function(snap){
             var groups = snap.val();
             var e = {"votes" : votes, "groups" : groups};
             res.send(e);
@@ -113,12 +128,12 @@ router.delete('/:id/users/:uid', function(req, res){
     var idVote = req.params.id;
     var uid = req.params.uid;
 
-    usersDB.child(uid).child("votes").child(idVote).remove();
+    userDB.child(uid).child("votes").child(idVote).remove();
     voteDB.child(idVote).remove();
 
     voteDB.once('value', function(snapshot){
         var votes = snapshot.val();
-        groupsDB.once("value", function(snap){
+        groupDB.once("value", function(snap){
             var groups = snap.val();
             var e = {"votes" : votes, "groups" : groups};
             res.send(e);
