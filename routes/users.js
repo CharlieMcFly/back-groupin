@@ -3,8 +3,8 @@ var router = express.Router();
 var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
 var userDB = database.ref().child('users');
-var notifAmisDB = database.ref().child('notifications').child('amis');
-var notifGroupesDB = database.ref().child('notifications').child('groupes');
+var notifiAmisDB = database.ref().child('notifications').child('amis');
+var notifiGroupesDB = database.ref().child('notifications').child('groupes');
 var groupDB = database.ref().child('groups');
 var eventDB = database.ref().child('events');
 
@@ -56,13 +56,7 @@ router.get('/', function(req, res){
 
 });
 
-/**
- * Suppression d'un user
- */
-router.delete('/:uid', function(req, res){
-    userDB.child(req.params.uid).remove();
-    res.sendStatus(200);
-});
+
 
 //// FRIENDS
 
@@ -80,13 +74,45 @@ router.post('/friends', function(req, res){
     userDB.child(uidD).child('friends').child(uidR).set(true);
 
     // suppresion des notifs
-    notifAmisDB.child(uidR).child(uidD).remove();
-    notifAmisDB.child(uidD).child(uidR).remove();
+    notifiAmisDB.child(uidR).child(uidD).remove();
+    notifiAmisDB.child(uidD).child(uidR).remove();
 
-    userDB.child(uidR).once('value', function(snapshot){
-        var user =  {"user" : snapshot.val()};
-        res.send(user);
-    })
+    groupDB.once("value", function(groups){
+        userDB.once("value", function(users){
+            notifiAmisDB.child(uidR).once('value', function(namis){
+                notifiGroupesDB.child(uidR).once('value', function(ngroups) {
+                    var nAmis = namis.val();
+                    var nGroupes = ngroups.val();
+                    var all_users = users.val();
+                    var my_user = all_users[uidR];
+                    var all_groups = groups.val();
+                    var tabNotifAmis = [];
+                    var tabNotifGroupes = [];
+
+                    if(all_users && all_groups){
+                        if(nAmis){
+                            Object.keys(nAmis).forEach(function(a){
+                                if(all_users[a])
+                                    tabNotifAmis.push(all_users[a]);
+                            })
+                        }
+                        if(nGroupes){
+                            Object.keys(nGroupes).forEach(function(g){
+                                if(all_groups[g])
+                                    tabNotifGroupes.push(all_groups[g]);
+                            })
+                        }
+                    }
+                    var n = {
+                        "user" : my_user,
+                        "notifsAmis" : tabNotifAmis,
+                        "notifsGroupes" : tabNotifGroupes
+                    };
+                    res.send(n);
+                });
+            });
+        });
+    });
 });
 
 //// GROUPS
@@ -106,7 +132,7 @@ router.post('/groups', function(req, res){
     groupDB.child(idG).child('membres').child(uidR).set(true);
 
     // suppresion des notifs
-    notifGroupesDB.child(uidR).child(idG).remove();
+    notifiGroupesDB.child(uidR).child(idG).remove();
 
     userDB.child(uidR).once('value', function(snapshot){
         var user =  {"user" : snapshot.val()};

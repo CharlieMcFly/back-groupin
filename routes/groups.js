@@ -82,6 +82,37 @@ router.post('/', function(req, res) {
     });
 });
 
+/**
+ * Ajouter une photo au groupe
+ */
+router.post('/photo', function(req, res){
+
+    var idgroup = req.body.key;
+    var url = req.body.url;
+
+    groupDB.child(idgroup).child("photos").once("value", function(photos){
+
+        var all_photo = photos.val();
+        if(all_photo){
+            var nbPhoto = Object.keys(all_photo).length;
+            groupDB.child(idgroup).child("photos").child(nbPhoto).set(url);
+        }else{
+            groupDB.child(idgroup).child("photos").child(0).set(url);
+        }
+
+    });
+
+
+    groupDB.child(idgroup).once("value", function(group){
+        var result = {
+           "group" : group.val()
+        };
+        res.send(result);
+    });
+
+
+});
+
 
 module.exports = router;
 

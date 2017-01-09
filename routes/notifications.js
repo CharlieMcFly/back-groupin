@@ -7,6 +7,8 @@ var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
 var notifiAmisDB = database.ref().child('notifications').child('amis');
 var notifiGroupesDB = database.ref().child('notifications').child('groupes');
+var userDB = database.ref().child('users');
+var groupDB = database.ref().child('groups');
 
 /// AMIS ///
 
@@ -32,18 +34,40 @@ router.get('/:uid', function(req, res){
 
     var uid = req.params.uid;
 
-    notifiAmisDB.child(uid).once('value', function(snapshot){
-        var nAmis = snapshot.val();
-            notifiGroupesDB.child(uid).once('value', function(snap) {
-                var nGroupes = snap.val();
-                var n = {
-                    "notifsAmis" : nAmis,
-                    "notifsGroupes" : nGroupes
-                };
-                res.send(n);module.exports = router;
-            });
+    groupDB.once("value", function(groups){
+        userDB.once("value", function(users){
+            notifiAmisDB.child(uid).once('value', function(namis){
+                notifiGroupesDB.child(uid).once('value', function(ngroups) {
+                    var nAmis = namis.val();
+                    var nGroupes = ngroups.val();
+                    var all_users = users.val();
+                    var all_groups = groups.val();
+                    var tabNotifAmis = [];
+                    var tabNotifGroupes = [];
 
-    })
+                    if(all_users && all_groups){
+                        if(nAmis){
+                            Object.keys(nAmis).forEach(function(a){
+                                if(all_users[a])
+                                    tabNotifAmis.push(all_users[a]);
+                            })
+                        }
+                        if(nGroupes){
+                            Object.keys(nGroupes).forEach(function(g){
+                                if(all_groups[g])
+                                    tabNotifGroupes.push(all_groups[g]);
+                            })
+                        }
+                    }
+                    var n = {
+                        "notifsAmis" : tabNotifAmis,
+                        "notifsGroupes" : tabNotifGroupes
+                    };
+                    res.send(n);
+                });
+            });
+        });
+    });
 });
 
 /**
@@ -80,9 +104,49 @@ router.post('/groups/', function(req, res){
  */
 router.delete('/users/:uid/groups/:idgroup', function(req, res){
 
-    notifiGroupesDB.child(req.params.uid).child(req.params.idgroup).remove();
-    notifiGroupesDB.child(req.params.idgroup).child(req.params.uid).remove();
-    res.sendStatus(200);
+    var uid = req.params.uid;
+    var groupid = req.params.idgroup;
+
+    notifiGroupesDB.child(uid).child(groupid).remove();
+    notifiGroupesDB.child(groupid).child(uid).remove();
+
+    groupDB.once("value", function(groups){
+        userDB.once("value", function(users){
+            notifiAmisDB.child(uid).once('value', function(namis){
+                notifiGroupesDB.child(uid).once('value', function(ngroups) {
+                    var nAmis = namis.val();
+                    var nGroupes = ngroups.val();
+                    var all_users = users.val();
+                    var my_user = all_users[uid];
+                    var all_groups = groups.val();
+                    var tabNotifAmis = [];
+                    var tabNotifGroupes = [];
+
+                    if(all_users && all_groups){
+                        if(nAmis){
+                            Object.keys(nAmis).forEach(function(a){
+                                if(all_users[a])
+                                    tabNotifAmis.push(all_users[a]);
+                            })
+                        }
+                        if(nGroupes){
+                            Object.keys(nGroupes).forEach(function(g){
+                                if(all_groups[g])
+                                    tabNotifGroupes.push(all_groups[g]);
+                            })
+                        }
+                    }
+                    var n = {
+                        "user" : my_user,
+                        "notifsAmis" : tabNotifAmis,
+                        "notifsGroupes" : tabNotifGroupes
+                    };
+                    res.send(n);
+                });
+            });
+        });
+    });
+
 
 });
 
