@@ -181,8 +181,14 @@ router.post('/participants', function(req, res){
     var participe = req.body.participe;
     var group = req.body.group;
 
-    userDB.child(uid).child('events').child(event).set(participe);
-    eventDB.child(event).child('participants').child(uid).set(participe);
+    if(participe){
+        eventDB.child(event).child('participants').child(uid).set(participe);
+        userDB.child(uid).child('events').child(event).set(participe);
+    }
+    else{
+        userDB.child(uid).child('events').child(event).remove();
+        userDB.child(uid).child('events').child(event).remove();
+    }
 
     groupDB.child(group).once("value", function(group){
         userDB.child(uid).once('value', function(user) {
@@ -216,5 +222,36 @@ router.post('/participants', function(req, res){
     });
 });
 
+/**
+ * Renvoie les events d'un utilisateur
+ */
+router.get('/users/:uid', function(req, res){
+    var uid = req.params.uid;
+
+    userDB.child(uid).once("value", function(user){
+       eventDB.once("value", function(events){
+          var my_user = user.val();
+          var all_events = events.val();
+          if(my_user && all_events){
+              var tabEvent = [];
+              if(my_user.events){
+                  for(var e in my_user.events){
+                      if(all_events[e]){
+                          var event = {
+                              "id" : all_events[e].id,
+                              "title" : all_events[e].nom,
+                              "start" : new Date(all_events[e].dateDebut),
+                              "end" : new Date(all_events[e].dateFin)
+                          };
+                          tabEvent.push(event);
+                      }
+                  }
+              }
+              res.send(tabEvent);
+          }
+       });
+    });
+
+});
 
 module.exports = router;
