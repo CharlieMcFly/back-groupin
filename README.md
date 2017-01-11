@@ -28,50 +28,6 @@ See coverage tests :
 
 - npm run coverage
 
-## API REST
+#### SWAGGER
 
-### USERS
-
-    -   POST:   /users
-    {
-            "displayName"   :   "username de l'utilisateur",
-            "email"         :   "email de l'utilisateur"
-            "photoURL"      :   "url de la photo"
-            "providerId"    :   "nom de la provenance des infos (facebook, google, autre)"
-            "uid"           :   "uid de l'utilisateur"
-    }
-    -   GET:    /users/:uid
-
-    :uid    est l'uid de l'utilisateur
-
-    -   GET:    /users
-
-
-### FRIENDS
-
-    -   POST:   /friends
-    {
-        "uidD"  :   "uid de la personne ayant demandé l'ajout",
-        "uidR"  :   "uid de la personne ayant reçue la demande d'ajout"
-    }
-    -   GET:    /friends/:uid
-
-        :uid    est l'utilisateur
-
-### NOTIFICATIONS
-
-    -   POST:   /notifications_amis
-    {
-            "uidD"  :   "uid de la personne ayant demandé l'ajout",
-            "uidR"  :   "uid de la personne ayant reçue la demande d'ajout"
-    }
-    -   GET:    /notifications_amis/:uid
-
-    :uid    est l'uid de l'utilisateur
-
-    -   GET:    /notifications_amis/:uid/:ami
-
-    :uid    est l'uid de l'utilisateur
-    :ami    est l'uid de l'ami qui a fait la demande d'ajout
-
-    Remarque : Cette dernière sert uniquement pour la suppression de la notificiation sans ajout d'amis
+https://platine-groupin.herokuapp.com/

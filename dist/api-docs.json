@@ -8,12 +8,13 @@
   },
   "basePath": "/",
   "tags" : [
-    {"name": "Tag1",
-      "description": "API for something"
-    },
     {"name": "Users",
-      "description": "API for Users"
+      "description": "API pour les Utilisateurs"
+    },
+    {"name": "Groups",
+      "description": "API pour les Groups d'utilisateur"
     }
+
   ],
   "schemes": [
     "http"
@@ -80,16 +81,214 @@
         "tags": [
           "Users"
         ],
-        "description": "Renvoie une liste d'utilisateur",
+        "description": "Renvoie un utilisateur",
         "operationId": "for the Url",
         "produces": [
           "application/json"
         ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "UID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Renvoie des utilisateurs",
+            "description": "Renvoie un utilisateur",
             "schema": {
-              "$ref": "#/definitions/responseUsers"
+              "$ref": "#/definitions/responseUser"
+            }
+          }
+        }
+      }
+    },
+    "/users/friends" : {
+      "post" : {
+        "tags": [
+          "Users"
+        ],
+        "description": "Ajoute un ami à un utilisateur",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "User Parametres",
+            "in": "body",
+            "description": "Ami à ajouter au User",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createFriend"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie l'utilisateur connecté, les notifications d'amis et de groupes",
+            "schema": {
+              "$ref": "#/definitions/responseUserNotifs"
+            }
+          }
+        }
+      }
+    },
+    "/users/groups" : {
+      "post" : {
+        "tags": [
+          "Users"
+        ],
+        "description": "Rejoindre un groupe",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "User Parametres",
+            "in": "body",
+            "description": "Groupe à ajouter à l'utilisateur",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie l'utilisateur connecté, les notifications d'amis et de groupes",
+            "schema": {
+              "$ref": "#/definitions/responseUser"
+            }
+          }
+        }
+      }
+    },
+    "/users/{uid}/groups/{id}" : {
+      "delete" : {
+        "tags": [
+          "Users"
+        ],
+        "description": "Quitter un groupe",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "UID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID du groupe",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie l'utilisateur et ses groupes",
+            "schema":{
+              "$ref":"#/definitions/responseUser"
+            }
+          }
+        }
+      }
+    },
+    "/groups" : {
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "description": "Créer un groupe",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Groupes Parametres",
+            "in": "body",
+            "description": "Groupe à ajouter à la base de données",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createGroupe"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie l'utilisateur connecté et sa liste de groupe" ,
+            "schema": {
+              "$ref": "#/definitions/responseUserGroupe"
+            }
+          }
+        }
+      }
+    },
+    "/groups/{uid}" : {
+      "get": {
+        "tags": [
+          "Groups"
+        ],
+        "description": "Renvoie les groups d'un utilisateur",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "UID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les groupes de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/responseGroups"
+            }
+          }
+        }
+      }
+    },
+    "/groups/photo" : {
+      "post": {
+        "tags": [
+          "Groups"
+        ],
+        "description": "Ajoute une photo au groupe",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Groupes Parametres",
+            "in": "body",
+            "description": "Photo à ajouter au groupe dans la base de données",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postPhoto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie l'utilisateur connecté et sa liste de groupe" ,
+            "schema": {
+              "$ref": "#/definitions/responseGroups"
             }
           }
         }
@@ -178,6 +377,15 @@
         }
       }
     },
+    "responseUser2" : {
+      "properties": {
+        "user": {
+          "required": true,
+          "type": "object",
+          "example": "{}"
+        }
+      }
+    },
     "responseUsers" : {
       "properties": {
         "users": {
@@ -186,6 +394,144 @@
           "example": "{'125486648': {} }"
         }
       }
+    },
+    "responseUserNotifs" : {
+      "properties": {
+        "user": {
+          "required": true,
+          "type": "object",
+          "example": "{'125486648': {} }"
+        },
+        "notifsAmis": {
+          "required": true,
+          "type": "array",
+          "items" : {
+            "type" : "object"
+          },
+          "example": "[]"
+        },
+        "notifsGroupes": {
+          "required": true,
+          "type": "array",
+          "items" : {
+            "type" : "object"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "createFriend" : {
+      "properties": {
+        "uidD": {
+          "required":true,
+          "type": "string",
+          "example": "01544861548E26"
+        },
+        "uidR": {
+          "required":true,
+          "type":"string",
+          "example": "01544861548E26"
+        }
+      }
+    },
+    "joinGroup" : {
+      "properties": {
+        "idG": {
+          "required":true,
+          "type": "string",
+          "example": "01544861548E26"
+        },
+        "uidR": {
+          "required":true,
+          "type":"string",
+          "example": "01544861548E26"
+        }
+      }
+    },
+    "leaveGroupe" : {
+      "properties": {
+        "user": {
+          "required": true,
+          "type": "object",
+          "example": "{}"
+        },
+        "groups": {
+          "required": true,
+          "type": "array",
+          "items" : {
+            "type" : "object"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "createGroupe" : {
+      "properties": {
+        "uid": {
+          "required":true,
+          "type": "string",
+          "example": "01544861548E26"
+        },
+        "nom": {
+          "required":true,
+          "type":"string",
+          "example": "Groupe"
+        },
+        "description": {
+          "required":true,
+          "type":"string",
+          "example": "Ceci est un groupe"
+        },
+        "photoURL": {
+          "required":true,
+          "type":"string",
+          "example": "http://www.photo.com/photo.jpg"
+        }
+      }},
+    "responseUserGroupe" : {
+      "properties": {
+        "user": {
+          "required":true,
+          "type": "object",
+          "example": "{'165483215' : {}}"
+        },
+        "groups": {
+          "required":true,
+          "type":"array",
+          "items" : {
+            "type" : "object"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "postPhoto": {
+      "properties": {
+        "key": {
+          "required":true,
+          "type": "string",
+          "example": "01544861548E26"
+        },
+        "url": {
+          "required":true,
+          "type":"string",
+          "example": "http://maphoto.jpg"
+        }
+      }
+    },
+    "responseGroups" : {
+      "properties": {
+        "groups": {
+          "required":true,
+          "type": "array",
+          "items" : {
+            "type" : "object"
+          },
+          "example": "[]"
+        }
+      }
     }
+
+
   }
 }

@@ -10,7 +10,6 @@ var argv = require('minimist')(process.argv.slice(2));
 var swagger = require("swagger-node-express");
 
 /* ROUTES */
-var index = require('./routes/index');
 var users = require('./routes/users');
 var notifications = require('./routes/notifications');
 var groups = require('./routes/groups');
@@ -71,7 +70,6 @@ app.use(cookieParser());
 app.use(express.static('dist'));
 
 /* APIS */
-app.use('/', index);
 app.use('/users', users);
 app.use('/notifications', notifications);
 app.use('/groups', groups);
