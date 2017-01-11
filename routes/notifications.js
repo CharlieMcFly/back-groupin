@@ -71,7 +71,7 @@ router.get('/:uid', function(req, res){
 });
 
 /**
- * Suppression d'une notification une fois valider
+ * Suppression d'une notification amis
  */
 router.delete('/users/:uid/friends/:ami', function(req, res){
     notifiAmisDB.child(req.params.uid).child(req.params.ami).remove();
@@ -85,15 +85,16 @@ router.delete('/users/:uid/friends/:ami', function(req, res){
 /**
  * Notification d'ajout d'un membres
  */
-router.post('/groups/', function(req, res){
+router.post('/groups', function(req, res){
 
     // id du groupe demandant l'ajout d'amis
     var idG = req.body.idG;
     // uid de l'utilisateurs recevant l'ajout d'amis
     var uidR = req.body.uidR;
 
-    // Ajout d'un user dans un groupe
+    // Ajout d'uns notif d'un user dans un groupe
     notifiGroupesDB.child(uidR).child(idG).set(true);
+
     res.sendStatus(200);
 
 });

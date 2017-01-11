@@ -134,10 +134,42 @@ router.post('/groups', function(req, res){
     // suppresion des notifs
     notifiGroupesDB.child(uidR).child(idG).remove();
 
-    userDB.child(uidR).once('value', function(snapshot){
-        var user =  {"user" : snapshot.val()};
-        res.send(user);
-    })
+    groupDB.once("value", function(groups){
+        userDB.once("value", function(users){
+            notifiAmisDB.child(uidR).once('value', function(namis){
+                notifiGroupesDB.child(uidR).once('value', function(ngroups) {
+                    var nAmis = namis.val();
+                    var nGroupes = ngroups.val();
+                    var all_users = users.val();
+                    var all_groups = groups.val();
+                    var my_user = all_users[uidR];
+                    var tabNotifAmis = [];
+                    var tabNotifGroupes = [];
+
+                    if(all_users && all_groups){
+                        if(nAmis){
+                            Object.keys(nAmis).forEach(function(a){
+                                if(all_users[a])
+                                    tabNotifAmis.push(all_users[a]);
+                            })
+                        }
+                        if(nGroupes){
+                            Object.keys(nGroupes).forEach(function(g){
+                                if(all_groups[g])
+                                    tabNotifGroupes.push(all_groups[g]);
+                            })
+                        }
+                    }
+                    var n = {
+                        "user" : my_user,
+                        "notifsAmis" : tabNotifAmis,
+                        "notifsGroupes" : tabNotifGroupes
+                    };
+                    res.send(n);
+                });
+            });
+        });
+    });
 });
 
 /**
@@ -160,19 +192,22 @@ router.delete('/:uid/groups/:id', function(req, res){
     groupDB.child(idgroup).child('membres').child(uid).remove();
 
     groupDB.child(idgroup).child('membres').once('value', function(snapshot){
+        var mem = snapshot.val();
         // check s'il y a des membres si pas delete all event vote chat ect
-        if(snapshot.val()){
+        if(!mem){
             groupDB.child(idgroup).child("events").once("value", function(snap){
                 var e = snap.val();
-                Object.keys(e).forEach(function(key){
-                    userDB.child(uid).child("events").child(key).remove();
-                    eventDB.child(key).remove();
-                });
+                if(e){
+                    Object.keys(e).forEach(function(key){
+                        userDB.child(uid).child("events").child(key).remove();
+                        eventDB.child(key).remove();
+                    });
+                }
+                groupDB.child(idgroup).remove();
             });
         }
     });
 
-    groupDB.child(idgroup).remove();
 
     // Renvoie le user et ses groupes
     userDB.child(uid).once('value', function(user){
