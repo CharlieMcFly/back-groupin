@@ -49,7 +49,7 @@ swagger.setApiInfo({
 
 /* SWAGGER UI*/
 subpath.get('/', function (req, res) {
-    res.sendfile(__dirname + '/dist/index.html');
+    res.sendFile(__dirname + '/dist/index.html');
 });
 
 /* SWAGGER CONFIG */
