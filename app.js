@@ -22,8 +22,10 @@ var chats = require('./routes/chats');
 var app = express();
 
 /* CORS */
+/*
 var cors = require('cors');
 app.use(cors());
+*/
 
 
 /* VIEWS */
@@ -32,10 +34,10 @@ app.set('view engine', 'jade');
 
 /* SWAGGER DOC */
 var subpath = express();
-app.use(bodyParser());
+
 app.use("/v1", subpath);
+
 swagger.setAppHandler(subpath);
-app.use(express.static('dist'));
 
 /* INFO API */
 swagger.setApiInfo({
@@ -55,25 +57,20 @@ subpath.get('/', function (req, res) {
 /* SWAGGER CONFIG */
 swagger.configureSwaggerPaths('', 'api-docs', '');
 
-var domain = 'localhost';
-if(argv.domain !== undefined)
-    domain = argv.domain;
-else
-    console.log('No --domain=xxx specified, taking default hostname "localhost".');
-var applicationUrl = 'http://' + domain;
+var applicationUrl = 'http://localhost:8080/';
 swagger.configure(applicationUrl, '1.0.0');
 
 
 
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('dist'));
 
+/* APIS */
 app.use('/', index);
 app.use('/users', users);
 app.use('/notifications', notifications);

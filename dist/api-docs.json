@@ -1,3 +1,191 @@
-/**
- * Created by charlie on 11/01/17.
- */
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Documentation GROUPIN ",
+    "description": "Explication des apis du serveur de GROUPIN : https://github.com/CharlieMcFly/back-groupin",
+    "termsOfService": ""
+  },
+  "basePath": "/",
+  "tags" : [
+    {"name": "Tag1",
+      "description": "API for something"
+    },
+    {"name": "Users",
+      "description": "API for Users"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+
+    "/users": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Créer ou Log un utilisateur",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "User Parametres",
+            "in": "body",
+            "description": "User à ajouter à la base de données",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie l'utilisateur connecté",
+            "schema": {
+              "$ref": "#/definitions/responseUser"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Renvoie une liste d'utilisateur",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie des utilisateurs",
+            "schema": {
+              "$ref": "#/definitions/responseUsers"
+            }
+          }
+        }
+      }
+    },
+    "/users/{uid}" : {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Renvoie une liste d'utilisateur",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie des utilisateurs",
+            "schema": {
+              "$ref": "#/definitions/responseUsers"
+            }
+          }
+        }
+      }
+    }
+
+  },
+
+  "definitions": {
+
+    "createUser": {
+      "properties": {
+        "uid": {
+          "required":true,
+          "type": "string",
+          "example": "01544861548E26"
+        },
+        "email": {
+          "required":true,
+          "type":"string",
+          "example": "test@test.be"
+        },
+        "displayName": {
+          "required":true,
+          "type":"string",
+          "example": "Jean Valjean"
+        },
+        "photoURL": {
+          "required":true,
+          "type":"string",
+          "example": "http://www.photo.com/unphoto.jpg"
+        },
+        "providerId": {
+          "required":true,
+          "type":"string",
+          "example": "facebook.com"
+        }
+      }
+    },
+    "responseUser" : {
+      "properties": {
+        "uid": {
+          "required": true,
+          "type": "string",
+          "example": "01544861548E26"
+        },
+        "email": {
+          "required": true,
+          "type": "string",
+          "example": "test@test.be"
+        },
+        "displayName": {
+          "required": true,
+          "type": "string",
+          "example": "Jean Valjean"
+        },
+        "photoURL": {
+          "required": true,
+          "type": "string",
+          "example": "http://www.photo.com/unphoto.jpg"
+        },
+        "providerId": {
+          "required": true,
+          "type": "string",
+          "example": "facebook.com"
+        },
+        "friends": {
+          "required": false,
+          "type": "object",
+          "example": "{'15486151235': true }"
+        },
+        "events": {
+          "required": false,
+          "type": "object",
+          "example": "{'15486151235': true }"
+        },
+        "groups": {
+          "required": false,
+          "type": "object",
+          "example": "{'15486151235': true }"
+        },
+        "votes": {
+          "required": false,
+          "type": "object",
+          "example": "{'15486151235': true }"
+        }
+      }
+    },
+    "responseUsers" : {
+      "properties": {
+        "users": {
+          "required": true,
+          "type": "object",
+          "example": "{'125486648': {} }"
+        }
+      }
+    }
+  }
+}
