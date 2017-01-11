@@ -241,7 +241,8 @@ router.get('/users/:uid', function(req, res){
                               "id" : all_events[e].id,
                               "title" : all_events[e].nom,
                               "start" : new Date(all_events[e].dateDebut),
-                              "end" : new Date(all_events[e].dateFin)
+                              "end" : new Date(all_events[e].dateFin),
+                              "stick" : true
                           };
                           tabEvent.push(event);
                       }
@@ -253,5 +254,33 @@ router.get('/users/:uid', function(req, res){
     });
 
 });
+
+/**
+ * Renvoie un event
+ */
+router.get('/:uid', function(req, res){
+    var event = req.params.uid;
+
+    userDB.once("value", function(users){
+        eventDB.child(event).once("value", function(event){
+            var all_user = users.val();
+            var my_event = event.val();
+            if(all_user && my_event){
+                var tabParticipant = [];
+                if(my_event.participants){
+                    for(var p in my_event.participants){
+                        if(all_user[p]){
+                            tabParticipant.push(all_user[p]);
+                        }
+                    }
+                    my_event.participants = tabParticipant;
+                }
+                res.send(my_event);
+            }
+        });
+    });
+
+});
+
 
 module.exports = router;
