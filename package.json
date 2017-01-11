@@ -20,7 +20,9 @@
     "jade": "~1.11.0",
     "morgan": "~1.7.0",
     "request": "^2.79.0",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "~2.3.0",
+    "swagger-node-express": "~2.0",
+    "minimist": "*"
   },
   "devDependencies": {
     "coveralls": "^2.11.15",
