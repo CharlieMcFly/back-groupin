@@ -16,6 +16,7 @@ var groups = require('./routes/groups');
 var events = require('./routes/events');
 var votes = require('./routes/votes');
 var chats = require('./routes/chats');
+var euros = require('./routes/euros');
 
 /* APP */
 var app = express();
@@ -57,9 +58,6 @@ swagger.configureSwaggerPaths('', 'api-docs', '');
 var applicationUrl = 'http://localhost:8080/';
 swagger.configure(applicationUrl, '1.0.0');
 
-
-
-
 // uncomment after placing your favicon in /public
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -74,7 +72,7 @@ app.use('/groups', groups);
 app.use('/events', events);
 app.use('/votes', votes);
 app.use('/chats', chats);
-
+app.use('/euros', euros);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
