@@ -21,10 +21,8 @@ var chats = require('./routes/chats');
 var app = express();
 
 /* CORS */
-/*
 var cors = require('cors');
 app.use(cors());
-*/
 
 
 /* VIEWS */
