@@ -13,6 +13,18 @@
     },
     {"name": "Groups",
       "description": "API pour les Groups d'utilisateur"
+    },
+    {"name": "Events",
+      "description": "API pour les Events des groupes"
+    },
+    {"name": "Votes",
+      "description": "API pour les Votes des groupes"
+    },
+    {"name": "Chats",
+      "description": "API pour le Chat des groupes"
+    },
+    {"name": "Notifications",
+      "description": "API pour les Notifications d'utilisateur"
     }
 
   ],
@@ -293,13 +305,251 @@
           }
         }
       }
+    },
+    "/events/users/{uid}/groups/{key}" : {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "description": "Renvoie les events d'un groupe",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "UID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "description": "ID du groupe",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les groupes de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/responseUserEvent"
+            }
+          }
+        }
+      }
+    },
+    "/events" : {
+
+    },
+    "/events/participants" : {
+
+    },
+    "/events/users/{uid}" : {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "description": "Renvoie les events d'un utilisateur",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "ID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les groupes de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/responseGroups"
+            }
+          }
+        }
+      }
+    },
+    "/events/{uid}" : {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "description": "Renvoie un event",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "ID de l'event",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les groupes de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/responseGroups"
+            }
+          }
+        }
+      }
+    },
+    "/chats" : {
+
+    },
+    "/chats/users/{uid}/groups/{key}" : {
+      "get": {
+        "tags": [
+          "Chats"
+        ],
+        "description": "Récupérer le chat d'un groupe",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "UID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          },{
+            "name": "key",
+            "in": "path",
+            "description": "ID du groupe",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les groupes de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/responseGroups"
+            }
+          }
+        }
+      }
+    },
+    "/notifications/amis" : {
+
+    },
+    "/notifications/{uid}" : {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "description": "Récupération des notifications d'une personne",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "UID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les groupes de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/responseGroups"
+            }
+          }
+        }
+      }
+    },
+    "/notifications/users/{uid}/friends/{ami}" : {
+
+    },
+    "/notifications/groups" : {
+
+    },
+    "/notifications/users/{uid}/groups/{idgroup}" : {
+
+    },
+    "/votes" : {
+
+    },
+    "/votes/users/{uid}/groups/{key}" : {
+      "get": {
+        "tags": [
+          "Votes"
+        ],
+        "description": "Renvoie les votes d'un groupe",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "UID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          },{
+            "name": "uid",
+            "in": "path",
+            "description": "UID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          }
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les groupes de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/responseGroups"
+            }
+          }
+        }
+      }
+    },
+    "/votes/{key}/groups/{groupid}/users/{uid}" : {
+
+    },
+    "/votes/users" : {
+
     }
 
   },
 
   "definitions": {
 
-    "createUser": {
+    "User" : {
+      "required" : [
+        "uid", "email"
+      ],
+      "properties" : {
+        "uid" : {
+          "type":"string"
+        },
+        "email" :  {
+          "type" : "string"
+        }
+      }
+    },
+
+    "postUser": {
       "properties": {
         "uid": {
           "required":true,
@@ -328,7 +578,7 @@
         }
       }
     },
-    "responseUser" : {
+    "user" : {
       "properties": {
         "uid": {
           "required": true,
@@ -377,6 +627,7 @@
         }
       }
     },
+
     "responseUser2" : {
       "properties": {
         "user": {
@@ -386,6 +637,64 @@
         }
       }
     },
+
+    "createGroupe" : {
+      "properties": {
+        "uid": {
+          "required":true,
+          "type": "string",
+          "example": "01544861548E26"
+        },
+        "nom": {
+          "required":true,
+          "type":"string",
+          "example": "Groupe"
+        },
+        "description": {
+          "required":true,
+          "type":"string",
+          "example": "Ceci est un groupe"
+        },
+        "photoURL": {
+          "required":true,
+          "type":"string",
+          "example": "http://www.photo.com/photo.jpg"
+        }
+      }},
+
+    "group" : {
+      "properties": {
+        "id": {
+          "required": true,
+          "type": "string",
+          "example": "01544861548E26"
+        },
+        "nom": {
+          "required": true,
+          "type": "string",
+          "example": "Groupe"
+        },
+        "description": {
+          "required": true,
+          "type": "string",
+          "example": "Ceci est un groupe"
+        },
+        "photoURL": {
+          "required": true,
+          "type": "string",
+          "example": "http://www.photo.com/photo.jpg"
+        }
+        "photoURL": {
+          "required": true,
+          "type": "string",
+          "example": "http://www.photo.com/photo.jpg"
+        }
+      }
+    },
+
+
+
+
     "responseUsers" : {
       "properties": {
         "users": {
@@ -465,29 +774,6 @@
         }
       }
     },
-    "createGroupe" : {
-      "properties": {
-        "uid": {
-          "required":true,
-          "type": "string",
-          "example": "01544861548E26"
-        },
-        "nom": {
-          "required":true,
-          "type":"string",
-          "example": "Groupe"
-        },
-        "description": {
-          "required":true,
-          "type":"string",
-          "example": "Ceci est un groupe"
-        },
-        "photoURL": {
-          "required":true,
-          "type":"string",
-          "example": "http://www.photo.com/photo.jpg"
-        }
-      }},
     "responseUserGroupe" : {
       "properties": {
         "user": {
@@ -504,6 +790,31 @@
           "example": "[]"
         }
       }
+    },
+    "responseUserEvent" : {
+      "properties": {
+        "user": {
+          "required":true,
+          "type": "object",
+          "example": "{'165483215' : {}}"
+        },
+        "events": {
+          "required":true,
+          "type":"array",
+          "items" : {
+            "type" : "object"
+          },
+          "example": "[]"
+        }
+      }
+    },
+    "responseEvent" : {
+        "required":true,
+        "type":"array",
+        "items" : {
+          "type" : "object"
+        },
+        "example": "[]"
     },
     "postPhoto": {
       "properties": {

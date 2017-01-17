@@ -1,4 +1,5 @@
 var express = require('express');
+var request = require('request');
 var router = express.Router();
 var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
@@ -56,8 +57,6 @@ router.get('/', function(req, res){
 
 });
 
-
-
 //// FRIENDS
 
 /**
@@ -76,6 +75,8 @@ router.post('/friends', function(req, res){
     // suppresion des notifs
     notifiAmisDB.child(uidR).child(uidD).remove();
     notifiAmisDB.child(uidD).child(uidR).remove();
+
+
 
     groupDB.once("value", function(groups){
         userDB.once("value", function(users){
@@ -134,6 +135,21 @@ router.post('/groups', function(req, res){
     // suppresion des notifs
     notifiGroupesDB.child(uidR).child(idG).remove();
 
+    // Ajout de l'amis au compte du groupe
+    var key = idG.replace(/-|_/g,'').toLowerCase();
+    var params = {"name" : uidR};
+    request.post({url:'https://ihatemoney.org/api/projects/'+key+'/members', formData: params,
+        'auth': {
+            'user': key,
+            'pass': key
+        }
+    }, function optionalCallback(err, httpResponse, body) {
+        if (err) {
+            return console.error('upload failed:', err);
+        }
+        console.log('Successful!  Server responded with:', body);
+    });
+
     groupDB.once("value", function(groups){
         userDB.once("value", function(users){
             notifiAmisDB.child(uidR).once('value', function(namis){
@@ -191,10 +207,45 @@ router.delete('/:uid/groups/:id', function(req, res){
     userDB.child(uid).child('groups').child(idgroup).remove();
     groupDB.child(idgroup).child('membres').child(uid).remove();
 
+    var key = idgroup.replace(/-|_/g, "").toLowerCase();
+    var auth= {'user': key, 'pass': key};
+
+    // Supprime le user du compte du groupe
+    request.get({url:'https://ihatemoney.org/api/projects/'+key+'/members', 'auth': auth},
+        function optionalCallback(err, httpResponse, body) {
+        if (err) {
+            return console.error('upload failed:', err);
+        }
+        var b = JSON.parse(body);
+        for(var i=0; i<b.length; i++){
+            if(b[i].name == uid){
+                request.delete({url:'https://ihatemoney.org/api/projects/'+key+'/members/'+b[i].id,
+                    'auth': auth
+                }, function optionalCallback(err, httpResponse, body) {
+                    if (err) {
+                        return console.error('upload failed:', err);
+                    }
+                    console.log('Successful!  Server responded with:', body);
+                });
+            }
+        }
+    });
+
+
+    // Supprime le projet si plus personne
     groupDB.child(idgroup).child('membres').once('value', function(snapshot){
         var mem = snapshot.val();
         // check s'il y a des membres si pas delete all event vote chat ect
         if(!mem){
+            // Remove le projet
+            request.delete('https://ihatemoney.org/api/projects/'+key, {'auth': auth },
+                function optionalCallback(err, httpResponse, body) {
+                    if (err) {
+                        return console.error('upload failed:', err);
+                    }
+                    console.log('Successful!  Server responded with:', body);
+            });
+
             groupDB.child(idgroup).child("events").once("value", function(snap){
                 var e = snap.val();
                 if(e){

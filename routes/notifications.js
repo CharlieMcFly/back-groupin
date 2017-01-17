@@ -15,7 +15,7 @@ var groupDB = database.ref().child('groups');
 /**
  * Ajout d'une notification pour l'amis que l'on a invité
  */
-router.post('/amis/', function(req, res){
+router.post('/amis', function(req, res){
     // uid de l'utilisateurs demandant l'ajout d'amis
     var uidD = req.body.uidD;
     // uid de l'utilisateurs recevant l'ajout d'amis

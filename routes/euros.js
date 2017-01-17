@@ -8,142 +8,55 @@ var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
 var userDB = database.ref().child('users');
 
-/**
- * Creer un groupe de dépense
- */
-router.post('/', function(req, res){
-    /*var params = {
-        "name" : req.body.name,
-        "id" : req.body.id,
-        "pwd" : req.body.pwd,
-        "contact_email" : req.body.contact
-    };*/
-    var params = {
-        "name" : "testcharlie1",
-        "id" : "testcharlie1",
-        "password" : "testcharlie1",
-        "contact_email" : "cquetstroey@hotmail.fr"
-    };
-    request.post({url:'https://ihatemoney.org/api/projects', formData: params}, function optionalCallback(err, httpResponse, body) {
-        if (err) {
-            return console.error('upload failed:', err);
-        }
-        console.log('Successful!  Server responded with:', body);
-        res.send(body);
-    });
-
-
-
-});
 
 /**
- * Récupérer un projet
+ * Récupérer un projet => renvoie les users et leur balance
  */
 router.get('/:id', function(req, res){
 
-    /*var id = req.params.id;*/
-    var id = "testcharlie1";
+    var id = req.params.id;
+    var key = id.replace(/-|_/g,'').toLowerCase();
+    var auth= {'user': key, 'pass': key};
 
-    request.get('https://ihatemoney.org/api/projects/'+id, {
-        'auth': {
-            'user': id,
-            'pass': id
-        }
-    },function optionalCallback(err, httpResponse, body) {
-        if (err) {
-            return console.error('upload failed:', err);
-        }
-        console.log('Successful!  Server responded with:', body);
-        res.send(body);
-    });
-});
-
-/**
- * Supprimer un projet
- */
-router.delete('/:id', function(req, res){
-    /*var id = req.params.id;*/
-    var id = "testcharlie1";
-
-    request.delete('https://ihatemoney.org/api/projects/'+id, {
-        'auth': {
-            'user': id,
-            'pass': id
-        }
-    },function optionalCallback(err, httpResponse, body) {
-        if (err) {
-            return console.error('upload failed:', err);
-        }
-        console.log('Successful!  Server responded with:', body);
-        res.send(body);
-    });
-});
-
-/**
- * Ajouter un membre au projet
- */
-router.post('/members', function(req, res){
-    //var uid = req.body.uid;
-    //var id = req.body.id;
-    var id = "testcharlie1";
-    var uid = "456798";
-    var params = {
-        "name" : uid
-    };
-    request.post({url:'https://ihatemoney.org/api/projects/'+id+'/members', formData: params,
-        'auth': {
-            'user': id,
-            'pass': id
-        }
-    }, function optionalCallback(err, httpResponse, body) {
-        if (err) {
-            console.error('upload failed:', err);
-            res.sendStatus(500);
-        }
-        console.log('Successful!  Server responded with:', body);
-        res.send(body);
-    });
-});
-
-/**
- * Supprimer un membre au projet
- */
-router.delete('/:id/members/:uid', function(req, res){
-    //var uid = req.params.uid;
-    //var id = req.params.id;
-    var id = "testcharlie1";
-    var uid = "123456";
-    request.get({url:'https://ihatemoney.org/api/projects/'+id+'/members',
-        'auth': {
-            'user': id,
-            'pass': id
-        }
-    }, function optionalCallback(err, httpResponse, body) {
-        if (err) {
-            console.error('upload failed:', err);
-            res.sendStatus(500);
-        }
-        console.log('Successful!  Server responded with:', body);
-        var b = JSON.parse(body);
-        for(var i=0; i<b.length; i++){
-            console.log(b[i]);
-            if(b[i].name == uid){
-                request.delete({url:'https://ihatemoney.org/api/projects/'+id+'/members/'+b[i].id,
-                    'auth': {
-                        'user': id,
-                        'pass': id
-                    }
-                }, function optionalCallback(err, httpResponse, body) {
-                    if (err) {
-                        console.error('upload failed:', err);
-                        res.sendStatus(500);
-                    }
-                    console.log('Successful!  Server responded with:', body);
-                    res.sendStatus(200);
-                });
+    userDB.once('value', function(users){
+       var all_users = users.val();
+        request.get('https://ihatemoney.org/api/projects/'+key, {
+            'auth': {
+                'user': key,
+                'pass': key
             }
-        }
+        },function optionalCallback(err, httpResponse, body) {
+            if (err) {
+                return console.error('upload failed:', err);
+            }
+            console.log('Successful!  Server responded with:', body);
+            var r  = JSON.parse(body);
+            var tabUser = [];
+            if(r['balance']){
+
+                var tabId = [];
+                var tabBal = [];
+                Object.keys(r['balance']).forEach(function(nb){
+                    tabId.push(nb);
+                    tabBal.push(r.balance[nb]);
+                });
+
+                var members = r["members"];
+                for(var id = 0 ; id < tabId.length ; id++){
+                    for(var m= 0; m < members.length ; m++){
+                        if(members[m].id == tabId[id]){
+                            var user = all_users[members[m].name];
+                            user['balance'] = tabBal[id];
+                            tabUser.push(user);
+                        }
+                    }
+                }
+            }
+            res.send(tabUser);
+        });
+
     });
+
 });
 
 /**

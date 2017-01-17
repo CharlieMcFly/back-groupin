@@ -3,6 +3,7 @@
  */
 var express = require('express');
 var router = express.Router();
+var request = require('request');
 var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
 var userDB = database.ref().child('users');
@@ -57,6 +58,36 @@ router.post('/', function(req, res) {
     groupDB.child(key).child("membres").child(uid).set(true);
     userDB.child(uid).child("groups").child(key).set(true);
 
+    key = key.replace(/-|_/g, "").toLowerCase();
+
+    // Créer le compte du groupe + ajout du user
+    var params = {
+        "name" : req.body.nom,
+        "id" : key,
+        "password" : key,
+        "contact_email" : req.body.email
+    };
+    request.post({url:'https://ihatemoney.org/api/projects', formData: params}, function optionalCallback(err, httpResponse, body) {
+        if (err) {
+            return console.error('upload failed:', err);
+        }
+        console.log('Successful!  Server responded with:', body);
+        // Ajouter le user au groupe
+        params = {"name" : uid};
+        request.post({url:'https://ihatemoney.org/api/projects/'+key+'/members', formData: params,
+                'auth': {
+                    'user': key,
+                    'pass': key
+                }},
+            function optionalCallback(err, httpResponse, body) {
+                if (err) {
+                    return console.error('upload failed:', err);
+                }
+                console.log('Successful!  Server responded with:', body);
+            });
+    });
+
+    // Renvoie le user et ses groupes
     userDB.child(uid).once('value', function(user){
         groupDB.once('value', function(groups){
             var all_groups = groups.val();
@@ -112,6 +143,8 @@ router.post('/photo', function(req, res){
 
 
 });
+
+
 
 
 module.exports = router;
