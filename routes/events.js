@@ -232,8 +232,9 @@ router.get('/users/:uid', function(req, res){
        eventDB.once("value", function(events){
           var my_user = user.val();
           var all_events = events.val();
-          if(my_user && all_events){
-              var tabEvent = [];
+           var tabEvent = [];
+
+           if(my_user && all_events){
               if(my_user.events){
                   for(var e in my_user.events){
                       if(all_events[e]){
@@ -248,8 +249,9 @@ router.get('/users/:uid', function(req, res){
                       }
                   }
               }
-              res.send(tabEvent);
-          }
+            }
+           res.send(tabEvent);
+
        });
     });
 

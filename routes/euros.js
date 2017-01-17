@@ -63,12 +63,11 @@ router.get('/:id', function(req, res){
  * Créer une bill pour un projet
  */
 router.post('/bills', function(req, res){
-    //var projet = req.body.id;
-    var id = "testcharlie1";
-    var payer = "uid";
-    var date = new Date();
+    var id = req.body.id.replace(/-|_/g, "");
+    var payer = req.body.uid;
+
     var bill = {
-        "what" : "test1",
+        "what" : req.body.what,
         "payer" : "3815", /* ID de l'utilisateur sur Ihatemoney */
         "payed_for" : "3816", /* Multiplier l'url pour plusieurs personne */
         "amount" : "15"
@@ -92,8 +91,8 @@ router.post('/bills', function(req, res){
  * Lister les bills d'un projet
  */
 router.get('/:id/bills', function(req, res){
-   //var id = req.params.id;
-   var id = "testcharlie1";
+    var id = req.params.id;
+    id = id.replace(/-|_/g, "").toLowerCase();
 
     request.get('https://ihatemoney.org/api/projects/'+id+'/bills', {
             'auth': {
@@ -105,7 +104,7 @@ router.get('/:id/bills', function(req, res){
                 return console.error('upload failed:', err);
             }
             console.log('Successful!  Server responded with:', body);
-            res.send(body);
+            res.send(JSON.parse(body));
     });
 });
 
