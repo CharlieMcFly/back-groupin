@@ -137,7 +137,7 @@
             "description": "Ami à ajouter au User",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CreateFriend"
+              "$ref": "#/definitions/Friend"
             }
           }
         ],
@@ -145,7 +145,7 @@
           "200": {
             "description": "Renvoie l'utilisateur connecté, les notifications d'amis et de groupes",
             "schema": {
-              "$ref": "#/definitions/ResponseNotifications"
+              "$ref": "#/definitions/ResponseUserNotifications"
             }
           }
         }
@@ -176,7 +176,7 @@
           "200": {
             "description": "Renvoie l'utilisateur connecté, les notifications d'amis et de groupes",
             "schema": {
-              "$ref": "#/definitions/ResponseNotifications"
+              "$ref": "#/definitions/ResponseUserNotifications"
             }
           }
         }
@@ -515,18 +515,156 @@
       }
     },
     "/notifications/amis" : {
-
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "description": "Créer une notification pour une invitation d'amis",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Notifications Parametres",
+            "in": "body",
+            "description": "Ajoute la notification d'ami à la base de données",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Friends"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "renvoie OK si aucun problème"
+          }
+        }
+      }
     },
     "/notifications/{uid}" : {
-
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "description": "Renvoie les notifications d'un user",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "ID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les groupes de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/ResponseUserNotifications"
+            }
+          }
+        }
+      }
     },
     "/notifications/users/{uid}/friends/{ami}" : {
-
+      "delete": {
+        "tags": [
+          "Notifications"
+        ],
+        "description": "Supprime une notification d'ami d'un user",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "ID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "ami",
+            "in": "path",
+            "description": "ID de l'ami",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie OK si tout est bon"
+          }
+        }
+      }
     },
     "notifications/groups" : {
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "description": "Créer une notification pour une invitation dans un groupe",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Notifications Parametres",
+            "in": "body",
+            "description": "Ajoute la notification de groupe à la base de données",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/JoinGroup"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "renvoie OK si aucun problème"
+          }
+        }
+      }
 
     },
     "notifications/users/{uid}/groups/{idgroup}" : {
+      "delete": {
+        "tags": [
+          "Notifications"
+        ],
+        "description": "Supprime une notification de groupe d'un user",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "ID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "idgroup",
+            "in": "path",
+            "description": "ID du groupe",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie OK si tout est bon"
+          }
+        }
+      }
 
     }
 
@@ -709,7 +847,7 @@
         }
       }
     },
-    "CreateFriend" : {
+    "Friend" : {
       "properties": {
         "uidD": {
           "required":true,
@@ -723,7 +861,7 @@
         }
       }
     },
-    "ResponseNotifications" : {
+    "ResponseUserNotifications" : {
       "required" : ["user", "notifsAmis", "notifsGroupes"],
       "properties" : {
         "user" : {
@@ -883,6 +1021,5 @@
         }
       }
     }
-
   }
 }

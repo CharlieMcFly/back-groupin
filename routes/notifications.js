@@ -41,6 +41,7 @@ router.get('/:uid', function(req, res){
                     var nAmis = namis.val();
                     var nGroupes = ngroups.val();
                     var all_users = users.val();
+                    var my_user = all_users[uid];
                     var all_groups = groups.val();
                     var tabNotifAmis = [];
                     var tabNotifGroupes = [];
@@ -60,6 +61,7 @@ router.get('/:uid', function(req, res){
                         }
                     }
                     var n = {
+                        "user" : my_user,
                         "notifsAmis" : tabNotifAmis,
                         "notifsGroupes" : tabNotifGroupes
                     };
