@@ -631,7 +631,6 @@
           }
         }
       }
-
     },
     "notifications/users/{uid}/groups/{idgroup}" : {
       "delete": {
@@ -665,7 +664,6 @@
           }
         }
       }
-
     }
 
   },
@@ -1021,5 +1019,6 @@
         }
       }
     }
+
   }
 }

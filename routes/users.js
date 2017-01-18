@@ -15,25 +15,18 @@ var eventDB = database.ref().child('events');
 router.post('/', function(req, res){
 
     var uid = req.body.uid;
-
-    if(req.body.uid_mail)
-        uid = req.body.uid_mail;
-
-    // Check si existe le renvoie sinon le crée
-    userDB.child(uid).once('value', function(snapshot){
-        if(snapshot.val()){
-            res.send(snapshot.val());
-        }else{
-            userDB.child(uid).child('email').set(req.body.email);
-            userDB.child(uid).child('displayName').set(req.body.displayName);
-            userDB.child(uid).child('photoURL').set(req.body.photoURL);
-            userDB.child(uid).child('providerId').set(req.body.providerId);
-            userDB.child(uid).child('uid').set(uid);
-            userDB.child(uid).once('value', function(my_user) {
-                res.send(my_user.val());
-            });
-        }
+    userDB.child(uid).child('email').set(req.body.email);
+    userDB.child(uid).child('displayName').set(req.body.displayName);
+    userDB.child(uid).child('photoURL').set(req.body.photoURL);
+    if(req.body.providerId)
+        userDB.child(uid).child('providerId').set(req.body.providerId);
+    else
+        userDB.child(uid).child('providerId').set(req.body.providerData[0].providerId);
+    userDB.child(uid).child('uid').set(uid);
+    userDB.child(uid).once('value', function(my_user) {
+        res.send(my_user.val());
     });
+
 });
 
 /**

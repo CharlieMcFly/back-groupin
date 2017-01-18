@@ -19,8 +19,8 @@ router.get('/:uid', function(req, res){
         groupDB.once('value', function(groups){
             var all_groups = groups.val();
             var groupsRes = [];
+            var my_user = user.val();
             if(all_groups){
-                var my_user = user.val();
                 if(my_user){
                     if(my_user.groups){
                         for(var g in my_user.groups){
