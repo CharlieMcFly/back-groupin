@@ -24,38 +24,32 @@ router.get('/users/:uid/groups/:key', function(req, res){
               var my_user = user.val();
               var my_group = group.val();
               var tabVotes = [];
-              if(my_group){
-                  if(all_votes){
-                     if(my_group.votes){
-                         for(var v in my_group.votes){
-                             if(all_votes[v]){
-                                 var tabChoix = [];
-                                 if(all_votes[v].choix){
-                                     for(var c in all_votes[v].choix){
-                                         if(all_votes[v].a_vote){
-                                             var pourcent = ( all_votes[v].choix[c] / Object.keys(all_votes[v].a_vote).length ) * 100;
-                                             var choixRes = {
-                                                 "choix" : c,
-                                                 "pourcentage" : pourcent
-                                             };
-                                             tabChoix.push(choixRes);
-                                         }else{
-                                             tabChoix.push(c);
-                                         }
-                                     }
-                                     var hasalreadyvote;
-                                     if(all_votes[v].a_vote[uid])
-                                         hasalreadyvote = true;
-                                     else
-                                         hasalreadyvote = false;
-                                     all_votes[v].hasalreadyvote = hasalreadyvote;
-                                     all_votes[v].choix = tabChoix;
-                                 }
-                                 tabVotes.push(all_votes[v]);
+              if(my_group && all_votes && my_group.votes){
+                 for(var v in my_group.votes){
+                     var tabChoix = [];
+                     if(all_votes[v] && all_votes[v].choix){
+                         for(var c in all_votes[v].choix){
+                             if(all_votes[v].a_vote){
+                                 var pourcent = ( all_votes[v].choix[c] / Object.keys(all_votes[v].a_vote).length ) * 100;
+                                 var choixRes = {
+                                     "choix" : c,
+                                     "pourcentage" : pourcent
+                                 };
+                                 tabChoix.push(choixRes);
+                             }else{
+                                 tabChoix.push(c);
                              }
                          }
+                         var hasalreadyvote;
+                         if(all_votes[v].a_vote && all_votes[v].a_vote[uid])
+                             hasalreadyvote = true;
+                         else
+                             hasalreadyvote = false;
+                         all_votes[v].hasalreadyvote = hasalreadyvote;
+                         all_votes[v].choix = tabChoix;
                      }
-                  }
+                     tabVotes.push(all_votes[v]);
+                 }
               }
               var result = {
                   "user": my_user,
@@ -75,13 +69,14 @@ router.post('/', function(req, res) {
 
     var key = req.body.id;
     var uid = req.body.createur;
+    var groupId = req.body.group;
+
     if (key == undefined){
         key = voteDB.push().key;
         voteDB.child(key).child("id").set(key);
         voteDB.child(key).child("createur").set(uid);
+        userDB.child(uid).child("votes").child(key).set(true)
     }
-
-    var groupId = req.body.group;
 
     voteDB.child(key).child("question").set(req.body.question);
 
@@ -94,42 +89,36 @@ router.post('/', function(req, res) {
 
     voteDB.once('value', function(votes){
         userDB.child(uid).once("value", function(user){
-            groupDB.child(groupid).once("value", function(group){
+            groupDB.child(groupId).once("value", function(group){
                 var all_votes = votes.val();
                 var my_user = user.val();
                 var my_group = group.val();
                 var tabVotes = [];
-                if(my_group){
-                    if(all_votes){
-                        if(my_group.votes){
-                            for(var v in my_group.votes){
-                                if(all_votes[v]){
-                                    var tabChoix = [];
-                                    if(all_votes[v].choix){
-                                        for(var c in all_votes[v].choix){
-                                            if(all_votes[v].a_vote){
-                                                var pourcent = (all_votes[v].choix[c] / Object.keys(all_votes[v].a_vote).length) * 100;
-                                                var choixRes = {
-                                                    "choix" : c,
-                                                    "pourcentage" : pourcent
-                                                };
-                                                tabChoix.push(choixRes);
-                                            }else{
-                                                tabChoix.push(c);
-                                            }
-                                        }
-                                        var hasalreadyvote;
-                                        if(all_votes[v].a_vote[uid])
-                                            hasalreadyvote = true;
-                                        else
-                                            hasalreadyvote = false;
-                                        all_votes[v].hasalreadyvote = hasalreadyvote;
-                                        all_votes[v].choix = tabChoix;
-                                    }
-                                    tabVotes.push(all_votes[v]);
+                if(my_group && all_votes && my_group.votes){
+                    for(var v in my_group.votes){
+                        var tabChoix = [];
+                        if(all_votes[v] && all_votes[v].choix){
+                            for(var c in all_votes[v].choix){
+                                if(all_votes[v].a_vote){
+                                    var pourcent = ( all_votes[v].choix[c] / Object.keys(all_votes[v].a_vote).length ) * 100;
+                                    var choixRes = {
+                                        "choix" : c,
+                                        "pourcentage" : pourcent
+                                    };
+                                    tabChoix.push(choixRes);
+                                }else{
+                                    tabChoix.push(c);
                                 }
                             }
+                            var hasalreadyvote;
+                            if(all_votes[v].a_vote && all_votes[v].a_vote[uid])
+                                hasalreadyvote = true;
+                            else
+                                hasalreadyvote = false;
+                            all_votes[v].hasalreadyvote = hasalreadyvote;
+                            all_votes[v].choix = tabChoix;
                         }
+                        tabVotes.push(all_votes[v]);
                     }
                 }
                 var result = {
@@ -157,43 +146,36 @@ router.delete('/:key/groups/:groupid/users/:uid', function(req, res){
 
     voteDB.once('value', function(votes){
         userDB.child(uid).once("value", function(user){
-            groupDB.child(groupid).once("value", function(group){
+            groupDB.child(groupId).once("value", function(group){
                 var all_votes = votes.val();
                 var my_user = user.val();
                 var my_group = group.val();
                 var tabVotes = [];
-                if(my_group){
-                    if(all_votes){
-                        if(my_group.votes){
-                            for(var v in my_group.votes){
-                                if(all_votes[v]){
-                                    var tabChoix = [];
-                                    if(all_votes[v].choix){
-                                        for(var c in all_votes[v].choix){
-                                            if(all_votes[v].a_vote){
-                                                var pourcent = (all_votes[v].choix[c] / Object.keys(all_votes[v].a_vote).length) * 100;
-
-                                                var choixRes = {
-                                                    "choix" : c,
-                                                    "pourcentage" : pourcent
-                                                };
-                                                tabChoix.push(choixRes);
-                                            }else{
-                                                tabChoix.push(c);
-                                            }
-                                        }
-                                        var hasalreadyvote;
-                                        if(all_votes[v].a_vote[uid])
-                                            hasalreadyvote = true;
-                                        else
-                                            hasalreadyvote = false;
-                                        all_votes[v].hasalreadyvote = hasalreadyvote;
-                                        all_votes[v].choix = tabChoix;
-                                    }
-                                    tabVotes.push(all_votes[v]);
+                if(my_group && all_votes && my_group.votes){
+                    for(var v in my_group.votes){
+                        var tabChoix = [];
+                        if(all_votes[v] && all_votes[v].choix){
+                            for(var c in all_votes[v].choix){
+                                if(all_votes[v].a_vote){
+                                    var pourcent = ( all_votes[v].choix[c] / Object.keys(all_votes[v].a_vote).length ) * 100;
+                                    var choixRes = {
+                                        "choix" : c,
+                                        "pourcentage" : pourcent
+                                    };
+                                    tabChoix.push(choixRes);
+                                }else{
+                                    tabChoix.push(c);
                                 }
                             }
+                            var hasalreadyvote;
+                            if(all_votes[v].a_vote && all_votes[v].a_vote[uid])
+                                hasalreadyvote = true;
+                            else
+                                hasalreadyvote = false;
+                            all_votes[v].hasalreadyvote = hasalreadyvote;
+                            all_votes[v].choix = tabChoix;
                         }
+                        tabVotes.push(all_votes[v]);
                     }
                 }
                 var result = {

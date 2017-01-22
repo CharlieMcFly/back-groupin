@@ -195,11 +195,11 @@ router.post('/participants', function(req, res){
         userDB.child(uid).child('events').child(event).set(participe);
     }
     else{
-        userDB.child(uid).child('events').child(event).remove();
+        eventDB.child(event).child('participants').child(uid).remove();
         userDB.child(uid).child('events').child(event).remove();
     }
 
-    groupDB.child(key).once("value", function(group){
+    groupDB.child(group).once("value", function(group){
         userDB.once('value', function(users) {
             eventDB.once("value", function (events) {
                 var all_users = users.val();
