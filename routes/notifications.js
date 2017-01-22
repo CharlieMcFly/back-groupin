@@ -23,7 +23,8 @@ router.post('/amis', function(req, res){
 
     // Ajout d'une notification amis
     notifiAmisDB.child(uidR).child(uidD).set(true);
-    res.sendStatus(200);
+
+    res.send({"message" : "OK"});
 
 });
 
@@ -97,7 +98,7 @@ router.post('/groups', function(req, res){
     // Ajout d'uns notif d'un user dans un groupe
     notifiGroupesDB.child(uidR).child(idG).set(true);
 
-    res.sendStatus(200);
+    res.send({"message" : "OK"});
 
 });
 
