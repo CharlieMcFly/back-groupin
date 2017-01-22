@@ -227,7 +227,6 @@ router.post('/participants', function(req, res){
  */
 router.get('/users/:uid', function(req, res){
     var uid = req.params.uid;
-
     userDB.child(uid).once("value", function(user){
        eventDB.once("value", function(events){
           var my_user = user.val();
@@ -253,6 +252,41 @@ router.get('/users/:uid', function(req, res){
            res.send(tabEvent);
 
        });
+    });
+
+});
+
+/**
+ * Renvoie les events d'un utilisateur pour android
+ */
+router.get('/users/:uid/android', function(req, res){
+    var uid = req.params.uid;
+
+    userDB.child(uid).once("value", function(user){
+        eventDB.once("value", function(events){
+            var my_user = user.val();
+            var all_events = events.val();
+            var tabEvent = {};
+
+            if(my_user && all_events){
+                if(my_user.events){
+                    for(var e in my_user.events){
+                        if(all_events[e]){
+                            var event = {
+                                "id" : all_events[e].id,
+                                "title" : all_events[e].nom,
+                                "start" : new Date(all_events[e].dateDebut),
+                                "end" : new Date(all_events[e].dateFin),
+                                "stick" : true
+                            };
+                            tabEvent[event["id"]] = event;
+                        }
+                    }
+                }
+            }
+            res.send(tabEvent);
+
+        });
     });
 
 });
