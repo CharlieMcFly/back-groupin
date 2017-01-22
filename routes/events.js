@@ -272,13 +272,7 @@ router.get('/users/:uid/android', function(req, res){
                 if(my_user.events){
                     for(var e in my_user.events){
                         if(all_events[e]){
-                            var event = {
-                                "id" : all_events[e].id,
-                                "title" : all_events[e].nom,
-                                "start" : new Date(all_events[e].dateDebut),
-                                "end" : new Date(all_events[e].dateFin),
-                                "stick" : true
-                            };
+                            var event = all_events[e];
                             tabEvent[event["id"]] = event;
                         }
                     }
