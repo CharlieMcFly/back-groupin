@@ -18,24 +18,26 @@ router.get('/users/:uid/groups/:key', function(req, res){
     var key = req.params.key;
 
     groupDB.child(key).once("value", function(group){
-        userDB.child(uid).once('value', function(user) {
+        userDB.once('value', function(users) {
             eventDB.once("value", function (events) {
-                var my_user = user.val();
+                var all_users = users.val();
+                var my_user = all_users[uid];
                 var my_group = group.val();
                 var resEvents = [];
-                if (my_group) {
-                    if (my_group.events) {
-                        var all_events = events.val();
-                        if (all_events) {
-                            for (var e in my_group.events) {
-                                if (all_events[e]) {
-                                    var d = new Date(all_events[e].dateDebut);
-                                    var f = new Date(all_events[e].dateFin);
-                                    all_events[e].dateDebut = d.getDate()+" / " +d.getMonth()+1 + " / " + d.getFullYear()+ " à " + d.getHours() + ":" + d.getMinutes();
-                                    all_events[e].dateFin = f.getDate()+" / " +f.getMonth()+1 + " / " + f.getFullYear()+ " à " + f.getHours() + ":"  + f.getMinutes() ;
-                                    resEvents.push(all_events[e]);
-                                }
+                var all_events = events.val();
+
+                if (my_group && all_events && my_group.events) {
+                    for (var e in my_group.events) {
+                        if (all_events[e]) {
+                           var participants = all_events[e].participants;
+                            if(participants){
+                                var all_participants = [];
+                                Object.keys(participants).forEach(function(k){
+                                    all_participants.push(all_users[k]);
+                                });
+                                all_events[e].participantsValues = all_participants;
                             }
+                            resEvents.push(all_events[e]);
                         }
                     }
                 }
@@ -84,25 +86,27 @@ router.post('/', function(req, res) {
     groupDB.child(groupId).child("events").child(key).set(true);
     userDB.child(uid).child("events").child(key).set(true);
 
-    groupDB.child(groupId).once("value", function(group){
-        userDB.child(uid).once('value', function(user) {
+    groupDB.child(key).once("value", function(group){
+        userDB.once('value', function(users) {
             eventDB.once("value", function (events) {
-                var my_user = user.val();
+                var all_users = users.val();
+                var my_user = all_users[uid];
                 var my_group = group.val();
                 var resEvents = [];
-                if (my_group) {
-                    if (my_group.events) {
-                        var all_events = events.val();
-                        if (all_events) {
-                            for (var e in my_group.events) {
-                                if (all_events[e]) {
-                                    var d = new Date(all_events[e].dateDebut);
-                                    var f = new Date(all_events[e].dateFin);
-                                    all_events[e].dateDebut = d.getDate()+" / " +d.getMonth()+1 + " / " + d.getFullYear()+ " à " + d.getHours() + ":" + d.getMinutes();
-                                    all_events[e].dateFin = f.getDate()+" / " +f.getMonth()+1 + " / " + f.getFullYear()+ " à " + f.getHours() + ":"  + f.getMinutes() ;
-                                    resEvents.push(all_events[e]);
-                                }
+                var all_events = events.val();
+
+                if (my_group && all_events && my_group.events) {
+                    for (var e in my_group.events) {
+                        if (all_events[e]) {
+                            var participants = all_events[e].participants;
+                            if(participants){
+                                var all_participants = [];
+                                Object.keys(participants).forEach(function(k){
+                                    all_participants.push(all_users[k]);
+                                });
+                                all_events[e].participantsValues = all_participants;
                             }
+                            resEvents.push(all_events[e]);
                         }
                     }
                 }
@@ -113,6 +117,7 @@ router.post('/', function(req, res) {
                 res.send(result);
             });
         });
+
     });
 });
 
@@ -190,25 +195,27 @@ router.post('/participants', function(req, res){
         userDB.child(uid).child('events').child(event).remove();
     }
 
-    groupDB.child(group).once("value", function(group){
-        userDB.child(uid).once('value', function(user) {
+    groupDB.child(key).once("value", function(group){
+        userDB.once('value', function(users) {
             eventDB.once("value", function (events) {
-                var my_user = user.val();
+                var all_users = users.val();
+                var my_user = all_users[uid];
                 var my_group = group.val();
                 var resEvents = [];
-                if (my_group) {
-                    if (my_group.events) {
-                        var all_events = events.val();
-                        if (all_events) {
-                            for (var e in my_group.events) {
-                                if (all_events[e]) {
-                                    var d = new Date(all_events[e].dateDebut);
-                                    var f = new Date(all_events[e].dateFin);
-                                    all_events[e].dateDebut = d.getDate()+" / " +d.getMonth()+1 + " / " + d.getFullYear()+ " à " + d.getHours() + ":" + d.getMinutes();
-                                    all_events[e].dateFin = f.getDate()+" / " +f.getMonth()+1 + " / " + f.getFullYear()+ " à " + f.getHours() + ":"  + f.getMinutes() ;
-                                    resEvents.push(all_events[e]);
-                                }
+                var all_events = events.val();
+
+                if (my_group && all_events && my_group.events) {
+                    for (var e in my_group.events) {
+                        if (all_events[e]) {
+                            var participants = all_events[e].participants;
+                            if(participants){
+                                var all_participants = [];
+                                Object.keys(participants).forEach(function(k){
+                                    all_participants.push(all_users[k]);
+                                });
+                                all_events[e].participantsValues = all_participants;
                             }
+                            resEvents.push(all_events[e]);
                         }
                     }
                 }
@@ -219,6 +226,7 @@ router.post('/participants', function(req, res){
                 res.send(result);
             });
         });
+
     });
 });
 
