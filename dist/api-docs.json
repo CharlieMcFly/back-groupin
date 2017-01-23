@@ -7,29 +7,35 @@
     "termsOfService": ""
   },
   "basePath": "/",
-  "tags" : [
-    {"name": "Users",
+  "tags": [
+    {
+      "name": "Users",
       "description": "API pour les Utilisateurs"
     },
-    {"name": "Groups",
+    {
+      "name": "Groups",
       "description": "API pour les Groups d'utilisateur"
     },
-    {"name": "Events",
+    {
+      "name": "Events",
       "description": "API pour les Events des groupes"
     },
-    {"name": "Votes",
+    {
+      "name": "Votes",
       "description": "API pour les Votes des groupes"
     },
-    {"name" : "Comptes",
+    {
+      "name": "Comptes",
       "description": "API pour les comptes des groupes"
     },
-    {"name": "Chats",
+    {
+      "name": "Chats",
       "description": "API pour le Chat des groupes"
     },
-    {"name": "Notifications",
+    {
+      "name": "Notifications",
       "description": "API pour les Notifications d'utilisateur"
     }
-
   ],
   "schemes": [
     "http"
@@ -41,7 +47,6 @@
     "application/json"
   ],
   "paths": {
-
     "/users": {
       "post": {
         "tags": [
@@ -91,7 +96,7 @@
         }
       }
     },
-    "/users/{uid}" : {
+    "/users/{uid}": {
       "get": {
         "tags": [
           "Users"
@@ -101,7 +106,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters":[
+        "parameters": [
           {
             "name": "uid",
             "in": "path",
@@ -120,8 +125,8 @@
         }
       }
     },
-    "/users/friends" : {
-      "post" : {
+    "/users/friends": {
+      "post": {
         "tags": [
           "Users"
         ],
@@ -151,8 +156,8 @@
         }
       }
     },
-    "/users/groups" : {
-      "post" : {
+    "/users/groups": {
+      "post": {
         "tags": [
           "Users"
         ],
@@ -182,8 +187,8 @@
         }
       }
     },
-    "/users/{uid}/groups/{id}" : {
-      "delete" : {
+    "/users/{uid}/groups/{id}": {
+      "delete": {
         "tags": [
           "Users"
         ],
@@ -192,7 +197,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters":[
+        "parameters": [
           {
             "name": "uid",
             "in": "path",
@@ -211,14 +216,14 @@
         "responses": {
           "200": {
             "description": "Renvoie l'utilisateur et ses groupes",
-            "schema":{
-              "$ref":"#/definitions/ResponseUserGroups"
+            "schema": {
+              "$ref": "#/definitions/ResponseUserGroups"
             }
           }
         }
       }
     },
-    "/groups" : {
+    "/groups": {
       "post": {
         "tags": [
           "Groups"
@@ -241,7 +246,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Renvoie l'utilisateur connecté et sa liste de groupe" ,
+            "description": "Renvoie l'utilisateur connecté et sa liste de groupe",
             "schema": {
               "$ref": "#/definitions/ResponseUserGroups"
             }
@@ -249,7 +254,7 @@
         }
       }
     },
-    "/groups/{uid}" : {
+    "/groups/{uid}": {
       "get": {
         "tags": [
           "Groups"
@@ -259,7 +264,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters":[
+        "parameters": [
           {
             "name": "uid",
             "in": "path",
@@ -278,7 +283,7 @@
         }
       }
     },
-    "/groups/photo" : {
+    "/groups/photo": {
       "post": {
         "tags": [
           "Groups"
@@ -301,7 +306,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Renvoie l'utilisateur connecté et sa liste de groupe" ,
+            "description": "Renvoie l'utilisateur connecté et sa liste de groupe",
             "schema": {
               "$ref": "#/definitions/ResponseGroup"
             }
@@ -309,7 +314,7 @@
         }
       }
     },
-    "/events/users/{uid}/groups/{key}" : {
+    "/events/users/{uid}/groups/{key}": {
       "get": {
         "tags": [
           "Events"
@@ -319,7 +324,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters":[
+        "parameters": [
           {
             "name": "uid",
             "in": "path",
@@ -345,7 +350,7 @@
         }
       }
     },
-    "/events" : {
+    "/events": {
       "post": {
         "tags": [
           "Events"
@@ -376,7 +381,7 @@
         }
       }
     },
-    "/events/participants" : {
+    "/events/participants": {
       "post": {
         "tags": [
           "Events"
@@ -407,7 +412,7 @@
         }
       }
     },
-    "/events/users/{uid}" : {
+    "/events/users/{uid}": {
       "get": {
         "tags": [
           "Events"
@@ -417,7 +422,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters":[
+        "parameters": [
           {
             "name": "uid",
             "in": "path",
@@ -439,7 +444,7 @@
         }
       }
     },
-    "/events/{uid}" : {
+    "/events/{uid}": {
       "get": {
         "tags": [
           "Events"
@@ -449,7 +454,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters":[
+        "parameters": [
           {
             "name": "uid",
             "in": "path",
@@ -468,7 +473,7 @@
         }
       }
     },
-    "/events/{key}/groups/{groupid}/users/{uid}" : {
+    "/events/{key}/groups/{groupid}/users/{uid}": {
       "delete": {
         "tags": [
           "Events"
@@ -478,7 +483,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters":[
+        "parameters": [
           {
             "name": "uid",
             "in": "path",
@@ -514,7 +519,7 @@
         }
       }
     },
-    "/notifications/amis" : {
+    "/notifications/amis": {
       "post": {
         "tags": [
           "Notifications"
@@ -542,7 +547,7 @@
         }
       }
     },
-    "/notifications/{uid}" : {
+    "/notifications/{uid}": {
       "get": {
         "tags": [
           "Notifications"
@@ -552,7 +557,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters":[
+        "parameters": [
           {
             "name": "uid",
             "in": "path",
@@ -571,7 +576,7 @@
         }
       }
     },
-    "/notifications/users/{uid}/friends/{ami}" : {
+    "/notifications/users/{uid}/friends/{ami}": {
       "delete": {
         "tags": [
           "Notifications"
@@ -581,7 +586,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters":[
+        "parameters": [
           {
             "name": "uid",
             "in": "path",
@@ -604,7 +609,7 @@
         }
       }
     },
-    "notifications/groups" : {
+    "/notifications/groups": {
       "post": {
         "tags": [
           "Notifications"
@@ -632,7 +637,7 @@
         }
       }
     },
-    "notifications/users/{uid}/groups/{idgroup}" : {
+    "/notifications/users/{uid}/groups/{idgroup}": {
       "delete": {
         "tags": [
           "Notifications"
@@ -642,7 +647,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters":[
+        "parameters": [
           {
             "name": "uid",
             "in": "path",
@@ -664,40 +669,248 @@
           }
         }
       }
+    },
+    "/votes" : {
+      "post": {
+        "tags": [
+          "Votes"
+        ],
+        "description": "Créer un vote dans un groupe d'amis",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Votes Parametres",
+            "in": "body",
+            "description": "Ajoute le vote de groupe à la base de données",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Vote"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie l'user et les votes du groupes",
+            "schema": {
+              "$ref": "#/definitions/ResponseUserVotes"
+            }
+          }
+        }
+      }
+    },
+    "/votes/users/{uid}/groups/{key}" : {
+      "get": {
+        "tags": [
+          "Votes"
+        ],
+        "description": "Renvoie les votes du groupes et l'user",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "ID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "description": "ID du groupe",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les groupes de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/ResponseUserVotes"
+            }
+          }
+        }
+      }
+
+    },
+    "/votes/{key}/groups/{groupid}/users/{uid}" : {
+      "delete": {
+        "tags": [
+          "Votes"
+        ],
+        "description": "Renvoie les votes du group et le user",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "ID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "description": "ID du vote",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "groupid",
+            "in": "path",
+            "description": "ID du groupe",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les groupes de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/ResponseUserVotes"
+            }
+          }
+        }
+      }
+    },
+    "/votes/users" : {
+      "post": {
+        "tags": [
+          "Votes"
+        ],
+        "description": "Ajoute le vote d'un membre du groupe",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Votes Parametres",
+            "in": "body",
+            "description": "Ajoute le vote d'un membre  du groupe",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddVote"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie l'user et les votes du groupes",
+            "schema": {
+              "$ref": "#/definitions/ResponseUserVotes"
+            }
+          }
+        }
+      }
+    },
+    "/chats" : {
+      "post": {
+        "tags": [
+          "Chats"
+        ],
+        "description": "Ajoute un message au groupe",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Chats Parametres",
+            "in": "body",
+            "description": "Ajoute un message au groupe",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie l'user et les votes du groupes",
+            "schema": {
+              "$ref": "#/definitions/ResponseUserMessages"
+            }
+          }
+        }
+      }
+
+    },
+    "/chats/users/{uid}/groups/{key}" : {
+      "get": {
+        "tags": [
+          "Chats"
+        ],
+        "description": "Renvoie les messages du groupes et l'user",
+        "operationId": "for the Url",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "ID de l'utilisateur",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "description": "ID du groupe",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Renvoie les message du groupe de l'utilisateur",
+            "schema": {
+              "$ref": "#/definitions/ResponseUserMessages"
+            }
+          }
+        }
+      }
     }
-
   },
-
   "definitions": {
-
-    "User" : {
-      "required" : [
-        "uid", "email"
+    "User": {
+      "required": [
+        "uid",
+        "email"
       ],
       "properties": {
         "uid": {
-          "required":true,
+          "required": true,
           "type": "string",
           "example": "01544861548E26"
         },
         "email": {
-          "required":true,
-          "type":"string",
+          "required": true,
+          "type": "string",
           "example": "test@test.be"
         },
         "displayName": {
-          "required":true,
-          "type":"string",
+          "required": true,
+          "type": "string",
           "example": "Jean Valjean"
         },
         "photoURL": {
-          "required":true,
-          "type":"string",
+          "required": true,
+          "type": "string",
           "example": "http://www.photo.com/unphoto.jpg"
         },
         "providerId": {
-          "required":true,
-          "type":"string",
+          "required": true,
+          "type": "string",
           "example": "facebook.com"
         },
         "friends": {
@@ -722,303 +935,555 @@
         }
       }
     },
-    "Group" : {
-      "required" : ["description", "photoURL", "nom"],
-      "properties" : {
-        "id" : {
-          "required":true,
+    "Group": {
+      "required": [
+        "description",
+        "photoURL",
+        "nom"
+      ],
+      "properties": {
+        "id": {
+          "required": true,
           "type": "string",
           "example": "01544861548E26"
         },
-        "nom" : {
-          "required":true,
+        "nom": {
+          "required": true,
           "type": "string",
           "example": "groupe de x"
         },
-        "description" : {
-          "required":true,
+        "description": {
+          "required": true,
           "type": "string",
           "example": "description de x"
         },
-        "membres" : {
-          "required":true,
+        "membres": {
+          "required": true,
           "type": "object",
           "example": "{'10025148420' : true}"
         },
-        "photoURL" : {
-          "required":true,
+        "photoURL": {
+          "required": true,
           "type": "string",
           "example": "http://myphoto.jpg"
         },
-        "votes" : {
-          "required":true,
+        "votes": {
+          "required": true,
           "type": "object",
           "example": "{'10025148420' : true}"
         },
-        "events" : {
-          "required":true,
+        "events": {
+          "required": true,
           "type": "object",
           "example": "{'10025148420' : true}"
         },
-        "messages" : {
-          "required":true,
+        "messages": {
+          "required": true,
           "type": "object",
           "example": "{'10025148420' : true}"
         },
-        "photos" : {
-          "required":true,
+        "photos": {
+          "required": true,
           "type": "object",
           "example": "{'10025148420' : true}"
         }
       }
     },
-    "Event" : {
-      "required" : ["nom", "photoURL", "description", "dateDebut", "dateFin"],
-      "properties" : {
-        "id" : {
-          "required":true,
+    "Event": {
+      "required": [
+        "nom",
+        "photoURL",
+        "description",
+        "dateDebut",
+        "dateFin"
+      ],
+      "properties": {
+        "id": {
+          "required": true,
           "type": "string",
           "example": "01544861548E26"
         },
-        "nom" : {
-          "required":true,
+        "nom": {
+          "required": true,
           "type": "string",
           "example": "évènement de x"
         },
-        "photoURL" : {
-          "required":true,
+        "photoURL": {
+          "required": true,
           "type": "string",
           "example": "http://photo.jpg"
         },
-        "description" : {
-          "required":true,
+        "description": {
+          "required": true,
           "type": "string",
           "example": "description de x"
         },
-        "dateDebut" : {
-          "required":true,
+        "dateDebut": {
+          "required": true,
           "type": "string",
           "example": "125468221315"
         },
-        "dateFin" : {
-          "required":true,
+        "dateFin": {
+          "required": true,
           "type": "string",
           "example": "1235498451215"
         },
-        "obj" : {
-          "required":true,
+        "obj": {
+          "required": true,
           "type": "string",
           "example": "une bouteille"
         },
-        "theme" : {
-          "required":true,
+        "theme": {
+          "required": true,
           "type": "string",
           "example": "déguisé halloween"
         },
-        "prix" : {
-          "required":true,
+        "prix": {
+          "required": true,
           "type": "string",
           "example": "15"
         }
       }
     },
-    "Users" : {
-      "required" : [
+    "Users": {
+      "required": [
         "users"
       ],
-      "properties" : {
-        "users" : {
-          "required" : true,
-          "type" : "array",
-          "items":{
+      "properties": {
+        "users": {
+          "required": true,
+          "type": "array",
+          "items": {
             "$ref": "#/definitions/User"
           }
         }
       }
     },
-    "ResponseUser" : {
-      "required" : ["user"],
-      "properties" : {
-        "user" : {
-          "required" : true,
-          "$ref": "#/definitions/User"
-        }
-      }
-    },
-    "Friend" : {
+    "Vote": {
+      "required": [
+        "question",
+        "choix"
+      ],
       "properties": {
-        "uidD": {
-          "required":true,
+        "id": {
+          "required": true,
           "type": "string",
           "example": "01544861548E26"
         },
-        "uidR": {
-          "required":true,
-          "type":"string",
-          "example": "01544861548E26"
-        }
-      }
-    },
-    "ResponseUserNotifications" : {
-      "required" : ["user", "notifsAmis", "notifsGroupes"],
-      "properties" : {
-        "user" : {
-          "required" : true,
-          "$ref": "#/definitions/User"
-        },
-        "notifsAmis" : {
-          "required" : true,
-          "type" : "array",
-          "items":{
-            "$ref": "#/definitions/User"
-          }
-        },
-        "notifsGroupes" : {
-          "required" : true,
-          "type" : "array",
-          "items":{
-            "$ref": "#/definitions/Group"
-          }
-        }
-      }
-    },
-    "JoinGroup" : {
-      "properties": {
-        "idG": {
-          "required":true,
+        "createur": {
+          "required": true,
           "type": "string",
-          "example": "01544861548E26"
+          "example": "1548612182154321"
         },
-        "uidR": {
-          "required":true,
-          "type":"string",
-          "example": "01544861548E26"
-        }
-      }
-    },
-    "ResponseUserGroups" : {
-      "required" : ["user","groups"],
-      "properties" : {
-        "user" : {
-          "required" : true,
-          "$ref": "#/definitions/User"
+        "question": {
+          "required": true,
+          "type": "string",
+          "example": "Quelle est la couleur de la lune ?"
         },
-        "groups" : {
-          "required" : true,
-          "type" : "array",
-          "items":{
-            "$ref": "#/definitions/Group"
+        "choix": {
+          "required": true,
+          "type": "array",
+          "items": {
+            "type": "string"
           }
+        },
+        "group": {
+          "required": true,
+          "type": "string",
+          "example": "245486621"
         }
       }
     },
-    "ResponseGroups" : {
-      "required" : ["groups"],
-      "properties" : {
-        "groups" : {
-          "required" : true,
-          "type" : "array",
-          "items" : {
-            "$ref": "#/definitions/Group"
-          }
+    "Choix": {
+      "required": [
+        "choix",
+        "pourcentage"
+      ],
+      "properties": {
+        "choix": {
+          "required": true,
+          "type": "string",
+          "example": "Bruxelles"
+        },
+        "pourcentage": {
+          "required": true,
+          "type": "integer",
+          "example": 15
         }
       }
     },
-    "Photo" : {
-      "required" : ["idgroup", "url"],
-      "properties" : {
-        "idgroup" : {
+    "Message" : {
+      "required" : [
+        "uid", "message", "groupId"
+      ],
+      "properties" :{
+        "uid" : {
           "required" : true,
           "type" : "string",
-          "example" : "021568421"
-        },
-        "url" : {
+          "example" : "13549821"
+        },"message" : {
           "required" : true,
           "type" : "string",
-          "example" : "http://photo.jpg"
-        }
-      }
-    },
-    "ResponseGroup" : {
-      "required" : ["group"],
-      "properties" : {
-        "group" : {
+          "example" : "Hello world"
+        },"groupId" : {
           "required" : true,
-          "$ref": "#/definitions/Group"
+          "type" : "string",
+          "example" : "13549821"
         }
       }
     },
-    "ResponseUserEvents" : {
-      "required": ["user", "events"],
+
+    "Messages" : {
+      "required" : [
+        "uid", "message", "groupId"
+      ],
+      "properties" :{
+        "auteur" : {
+          "required" : true,
+          "type" : "string",
+          "example" : "13549821"
+        },"message" : {
+          "required" : true,
+          "type" : "string",
+          "example" : "Hello world"
+        },"groupId" : {
+          "required" : true,
+          "type" : "string",
+          "example" : "13549821"
+        },"id" : {
+          "required" : true,
+          "type" : "string",
+          "example" : "13549821"
+        },"date" : {
+          "required" : true,
+          "type" : "string",
+          "example" : "13549821"
+        }, "a_vote" : {
+          "required" : true,
+          "type" : "object",
+          "example" : "{'12554823' : true, '5486541' : true}"
+        }
+
+      }
+    },
+    "ResponseUserMessage" :{
+      "required" : [
+        "user", "messages"
+      ],
       "properties" : {
         "user" : {
           "required" : true,
           "$ref" : "#/definitions/User"
         },
-        "events" : {
-          "required" :  true,
-          "type" : "array",
-          "items"  : {
-            "$ref" : "#/definitions/Event"
+        "messages" : {
+          "required" : true,
+          "type": "array",
+          "items" : {
+            "$ref" : "#/definitions/Messages"
           }
         }
       }
     },
-    "EventParticipant" : {
-      "required" : ["uid", "event", "participe", "group"],
+
+
+    "ResponseUserVotes" : {
+      "required" : [
+        "user", "votes"
+      ],
       "properties" : {
-        "uid" : {
-          "required" : true,
-          "type" : "string",
-          "example" : "12546218211654E"
+        "user" : {
+          "required" :  true,
+          "$ref": "#/definitions/User"
         },
-        "participe" : {
+        "votes" : {
           "required" : true,
-          "type" : "boolean",
-          "example" : true
-        },
-        "event" : {
-          "required" : true,
-          "type" : "string",
-          "example" : "12546218211654E"
-        },
-        "groupe" : {
-          "required" : true,
-          "type" : "string",
-          "example" : "12546218211654E"
+          "type": "array",
+          "items" : {
+            "$ref" : "#/definitions/ResponsePostVote"
+          }
         }
       }
     },
-    "EventCalendar" : {
-      "required" : ["id", "title", "start", "end", "stick"],
+    "ResponsePostVote": {
+      "required": [
+        "id",
+        "choix"
+      ],
+      "properties": {
+        "id": {
+          "required": true,
+          "type": "string",
+          "example": "01544861548E26"
+        },
+        "createur": {
+          "required": true,
+          "type": "string",
+          "example": "1548612182154321"
+        },
+        "question": {
+          "required": true,
+          "type": "string",
+          "example": "Quelle est la couleur de la lune ?"
+        },
+        "choix": {
+          "required": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Choix"
+          }
+        },
+        "group": {
+          "required": true,
+          "type": "string",
+          "example": "245486621"
+        },
+        "hasalreadyvote": {
+          "required": true,
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "AddVote" : {
+      "required" : [
+        "idVote", "uid", "reponse", "groupid"
+      ],
       "properties" : {
-        "id" : {
+        "idVote" : {
           "required" : true,
-          "type" :  "string",
-          "example" : "1235484321"
+          "type" : "string",
+          "example" : "12354862582"
         },
-        "title" : {
+        "uid" : {
           "required" : true,
-          "type" :  "string",
-          "example" : "event de x"
+          "type" : "string",
+          "example" : "15486211883"
         },
-        "start" : {
+        "reponse" : {
           "required" : true,
-          "type" :  "string",
-          "example" : "1235484321"
+          "type" : "string",
+          "example" : "Bruxelles"
         },
-        "end" : {
+        "groupid" : {
           "required" : true,
-          "type" :  "string",
-          "example" : "1235484321"
+          "type" : "string",
+          "example" : "1254897589"
+        }
+      }
+    },
+
+    "ResponseUser": {
+      "required": [
+        "user"
+      ],
+      "properties": {
+        "user": {
+          "required": true,
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "Friend": {
+      "properties": {
+        "uidD": {
+          "required": true,
+          "type": "string",
+          "example": "01544861548E26"
         },
-        "stick" : {
-          "required" : true,
-          "type" :  "boolean",
-          "example" : true
+        "uidR": {
+          "required": true,
+          "type": "string",
+          "example": "01544861548E26"
+        }
+      }
+    },
+    "ResponseUserNotifications": {
+      "required": [
+        "user",
+        "notifsAmis",
+        "notifsGroupes"
+      ],
+      "properties": {
+        "user": {
+          "required": true,
+          "$ref": "#/definitions/User"
+        },
+        "notifsAmis": {
+          "required": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        },
+        "notifsGroupes": {
+          "required": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Group"
+          }
+        }
+      }
+    },
+    "JoinGroup": {
+      "properties": {
+        "idG": {
+          "required": true,
+          "type": "string",
+          "example": "01544861548E26"
+        },
+        "uidR": {
+          "required": true,
+          "type": "string",
+          "example": "01544861548E26"
+        }
+      }
+    },
+    "ResponseUserGroups": {
+      "required": [
+        "user",
+        "groups"
+      ],
+      "properties": {
+        "user": {
+          "required": true,
+          "$ref": "#/definitions/User"
+        },
+        "groups": {
+          "required": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Group"
+          }
+        }
+      }
+    },
+    "ResponseGroups": {
+      "required": [
+        "groups"
+      ],
+      "properties": {
+        "groups": {
+          "required": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Group"
+          }
+        }
+      }
+    },
+    "Photo": {
+      "required": [
+        "idgroup",
+        "url"
+      ],
+      "properties": {
+        "idgroup": {
+          "required": true,
+          "type": "string",
+          "example": "021568421"
+        },
+        "url": {
+          "required": true,
+          "type": "string",
+          "example": "http://photo.jpg"
+        }
+      }
+    },
+    "ResponseGroup": {
+      "required": [
+        "group"
+      ],
+      "properties": {
+        "group": {
+          "required": true,
+          "$ref": "#/definitions/Group"
+        }
+      }
+    },
+    "ResponseUserEvents": {
+      "required": [
+        "user",
+        "events"
+      ],
+      "properties": {
+        "user": {
+          "required": true,
+          "$ref": "#/definitions/User"
+        },
+        "events": {
+          "required": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Event"
+          }
+        }
+      }
+    },
+    "EventParticipant": {
+      "required": [
+        "uid",
+        "event",
+        "participe",
+        "group"
+      ],
+      "properties": {
+        "uid": {
+          "required": true,
+          "type": "string",
+          "example": "12546218211654E"
+        },
+        "participe": {
+          "required": true,
+          "type": "boolean",
+          "example": true
+        },
+        "event": {
+          "required": true,
+          "type": "string",
+          "example": "12546218211654E"
+        },
+        "groupe": {
+          "required": true,
+          "type": "string",
+          "example": "12546218211654E"
+        }
+      }
+    },
+    "EventCalendar": {
+      "required": [
+        "id",
+        "title",
+        "start",
+        "end",
+        "stick"
+      ],
+      "properties": {
+        "id": {
+          "required": true,
+          "type": "string",
+          "example": "1235484321"
+        },
+        "title": {
+          "required": true,
+          "type": "string",
+          "example": "event de x"
+        },
+        "start": {
+          "required": true,
+          "type": "string",
+          "example": "1235484321"
+        },
+        "end": {
+          "required": true,
+          "type": "string",
+          "example": "1235484321"
+        },
+        "stick": {
+          "required": true,
+          "type": "boolean",
+          "example": true
         }
       }
     }
-
   }
 }
