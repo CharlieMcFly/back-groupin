@@ -63,13 +63,18 @@ router.get('/:id', function(req, res){
  * Créer une bill pour un projet
  */
 router.post('/bills', function(req, res){
-    var id = req.body.id.replace(/-|_/g, "");
-    var payer = req.body.uid;
+    //var id = req.body.id.replace(/-|_/g, "");
+    var id = "testcharlie1";
+    //var payer = req.body.uid;
+    // id du payeur
+
+    // ids des ayant recus
 
     var bill = {
-        "what" : req.body.what,
+        "what" : "truc",
         "payer" : "3815", /* ID de l'utilisateur sur Ihatemoney */
         "payed_for" : "3816", /* Multiplier l'url pour plusieurs personne */
+        "payed_for" : "3815", /* Multiplier l'url pour plusieurs personne */
         "amount" : "15"
     };
     request.post({url:'https://ihatemoney.org/api/projects/'+id+'/bills', formData: bill,
@@ -79,11 +84,10 @@ router.post('/bills', function(req, res){
         }
     }, function optionalCallback(err, httpResponse, body) {
         if (err) {
-            console.error('upload failed:', err);
-            res.sendStatus(500);
+            return console.error('upload failed:', err);
         }
         console.log('Successful!  Server responded with:', body);
-        res.send(body);
+        res.send(JSON.parse(body));
     });
 });
 
@@ -104,7 +108,7 @@ router.get('/:id/bills', function(req, res){
                 return console.error('upload failed:', err);
             }
             console.log('Successful!  Server responded with:', body);
-            res.send(JSON.parse(body));
+            res.sendStatus(200);
     });
 });
 
