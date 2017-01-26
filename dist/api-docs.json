@@ -604,7 +604,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Renvoie OK si tout est bon"
+            "description": "Renvoie le user et les tableau de notifications",
+            "schema": {
+              "$ref": "#/definitions/ResponseUserNotifications"
+            }
+
           }
         }
       }
@@ -665,7 +669,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Renvoie OK si tout est bon"
+            "description": "Renvoie le user et le tableau de ses notifications",
+            "schema": {
+              "$ref": "#/definitions/ResponseUserNotifications"
+            }
           }
         }
       }

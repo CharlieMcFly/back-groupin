@@ -79,7 +79,46 @@ router.get('/:uid', function(req, res){
 router.delete('/users/:uid/friends/:ami', function(req, res){
     notifiAmisDB.child(req.params.uid).child(req.params.ami).remove();
     notifiAmisDB.child(req.params.ami).child(req.params.uid).remove();
-    res.sendStatus(200);
+
+    groupDB.once("value", function(groups){
+        userDB.once("value", function(users){
+            notifiAmisDB.child(uid).once('value', function(namis){
+                notifiGroupesDB.child(uid).once('value', function(ngroups) {
+                    var nAmis = namis.val();
+                    var nGroupes = ngroups.val();
+                    var all_users = users.val();
+                    var my_user = all_users[uid];
+                    var all_groups = groups.val();
+                    var tabNotifAmis = [];
+                    var tabNotifGroupes = [];
+
+                    if(all_users && all_groups){
+                        if(nAmis){
+                            Object.keys(nAmis).forEach(function(a){
+                                if(all_users[a])
+                                    tabNotifAmis.push(all_users[a]);
+                            })
+                        }
+                        if(nGroupes){
+                            Object.keys(nGroupes).forEach(function(g){
+                                if(all_groups[g])
+                                    tabNotifGroupes.push(all_groups[g]);
+                            })
+                        }
+                    }
+                    var n = {
+                        "user" : my_user,
+                        "notifsAmis" : tabNotifAmis,
+                        "notifsGroupes" : tabNotifGroupes
+                    };
+                    res.send(n);
+                });
+            });
+        });
+    });
+
+
+
 });
 
 
