@@ -37,7 +37,11 @@ router.get('/users/:uid/groups/:key', function(req, res){
                                  };
                                  tabChoix.push(choixRes);
                              }else{
-                                 tabChoix.push(c);
+                                 var choixRes = {
+                                     "choix" : c,
+                                     "reponse" : false
+                                 };
+                                 tabChoix.push(choixRes);
                              }
                          }
                          var hasalreadyvote;
@@ -79,6 +83,10 @@ router.post('/', function(req, res) {
     }
 
     voteDB.child(key).child("question").set(req.body.question);
+    if(req.body.qcm)
+        voteDB.child(key).child("QCM").set(true);
+    else
+        voteDB.child(key).child("QCM").set(false);
 
     var choices = req.body.choix;
     for(var c in choices) {
@@ -107,7 +115,11 @@ router.post('/', function(req, res) {
                                     };
                                     tabChoix.push(choixRes);
                                 }else{
-                                    tabChoix.push(c);
+                                    var choixRes = {
+                                        "choix" : c,
+                                        "reponse" : false
+                                    };
+                                    tabChoix.push(choixRes);
                                 }
                             }
                             var hasalreadyvote;
@@ -142,6 +154,7 @@ router.delete('/:key/groups/:groupid/users/:uid', function(req, res){
     var uid = req.params.uid;
 
     userDB.child(uid).child("votes").child(voteId).remove();
+    groupDB.child(groupId).child("votes").child(voteId).remove();
     voteDB.child(voteId).remove();
 
     voteDB.once('value', function(votes){
@@ -164,7 +177,11 @@ router.delete('/:key/groups/:groupid/users/:uid', function(req, res){
                                     };
                                     tabChoix.push(choixRes);
                                 }else{
-                                    tabChoix.push(c);
+                                    var choixRes = {
+                                        "choix" : c,
+                                        "reponse" : false
+                                    };
+                                    tabChoix.push(choixRes);
                                 }
                             }
                             var hasalreadyvote;
@@ -197,25 +214,36 @@ router.post('/users', function(req, res){
 
     var idVotes = req.body.idVote;
     var uid = req.body.uid;
-    var reponse = req.body.reponse;
+    var choix = req.body.choix;
     var groupid = req.body.group;
-
     var adejavote = false;
 
-    voteDB.child(idVotes).child("a_vote").once("value", function(snap){
+    voteDB.child(idVotes).once("value", function(snap){
 
-        snap.forEach(function(child){
-           if(child.key == uid){
-               adejavote = true;
-           }
-        });
+        var vote = snap.val();
+        // check if the user has already vote
+        if(vote.a_vote){
+            Object.keys(vote.a_vote).forEach(function(key){
+                if(key == uid)
+                    adejavote = false;
+            })
+        }
 
+        // if hasnot already vote
         if(!adejavote){
             voteDB.child(idVotes).child("a_vote").child(uid).set(true);
-            voteDB.child(idVotes).child("choix").child(reponse).once('value', function(vote){
-                var nbv = vote.val();
-                nbv = nbv + 1 ;
-                voteDB.child(idVotes).child("choix").child(reponse).set(nbv);
+            voteDB.child(idVotes).child("choix").once('value', function(choices){
+                var all_choix = choices.val();
+                for(var i = 0; i<choix.length; i++){
+                    var c = choix[i];
+                    if(c.reponse){
+                        var nbv = all_choix[c.choix];
+                        nbv = nbv + 1;
+                        voteDB.child(idVotes).child("choix").child(c.choix).set(nbv);
+                    }
+                }
+                //res.sendStatus(200);
+
                 voteDB.once('value', function(votes){
                     userDB.child(uid).once("value", function(user){
                         groupDB.child(groupid).once("value", function(group){
@@ -233,18 +261,21 @@ router.post('/users', function(req, res){
                                                     for(var c in all_votes[v].choix){
                                                         if(all_votes[v].a_vote){
                                                             var pourcent = (all_votes[v].choix[c] / Object.keys(all_votes[v].a_vote).length) * 100;
-
                                                             var choixRes = {
                                                                 "choix" : c,
                                                                 "pourcentage" : pourcent
                                                             };
                                                             tabChoix.push(choixRes);
                                                         }else{
-                                                            tabChoix.push(c);
+                                                            var choixRes = {
+                                                                "choix" : c,
+                                                                "reponse" : false
+                                                            };
+                                                            tabChoix.push(choixRes);
                                                         }
                                                     }
                                                     var hasalreadyvote;
-                                                    if(all_votes[v].a_vote[uid])
+                                                    if(all_votes[v].a_vote && all_votes[v].a_vote[uid])
                                                         hasalreadyvote = true;
                                                     else
                                                         hasalreadyvote = false;
