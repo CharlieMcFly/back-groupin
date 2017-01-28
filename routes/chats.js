@@ -36,7 +36,7 @@ router.get('/users/:uid/groups/:key', function(req, res){
                                             all_messages[m].auteur = all_users[all_messages[m].auteur];
                                         }
                                     }
-                                    all_messages[m].date = new Date(all_messages[m].date).toString();
+                                    all_messages[m].date = new Date(all_messages[m].date).getTime();
                                     tabMsg.push(all_messages[m]);
                                 }
                             }
