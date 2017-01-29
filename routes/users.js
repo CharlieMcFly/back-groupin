@@ -28,6 +28,7 @@ router.post('/', function(req, res){
         userDB.child(uid).child('providerId').set(req.body.providerId);
     else
         userDB.child(uid).child('providerId').set(req.body.providerData[0].providerId);
+
     userDB.child(uid).once('value', function(my_user) {
         res.send(my_user.val());
     });

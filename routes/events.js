@@ -5,6 +5,7 @@ var express = require('express');
 var router = express.Router();
 var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
+var notifEventsDB = database.ref().child('notifications').child('events');
 var eventDB = database.ref().child('events');
 var groupDB = database.ref().child('groups');
 var userDB = database.ref().child('users');
@@ -20,6 +21,7 @@ router.get('/users/:uid/groups/:key', function(req, res){
     groupDB.child(key).once("value", function(group){
         userDB.once('value', function(users) {
             eventDB.once("value", function (events) {
+
                 var all_users = users.val();
                 var my_user = all_users[uid];
                 var my_group = group.val();
@@ -27,15 +29,26 @@ router.get('/users/:uid/groups/:key', function(req, res){
                 var all_events = events.val();
 
                 if (my_group && all_events && my_group.events) {
+                    // Récupère les events du group
                     for (var e in my_group.events) {
                         if (all_events[e]) {
-                           var participants = all_events[e].participants;
+                            // Récupère les participants s'il y en a
+                            var participants = all_events[e].participants;
                             if(participants){
                                 var all_participants = [];
                                 Object.keys(participants).forEach(function(k){
                                     all_participants.push(all_users[k]);
                                 });
                                 all_events[e].participantsValues = all_participants;
+                            }
+                            // Récupre les objects de l'évent s'il y en a
+                            var eventObj = all_events[e].obj;
+                            if(eventObj){
+                                var all_object = [];
+                                Object.keys(eventObj).forEach(function(k){
+                                    all_object.push(k);
+                                });
+                                all_events[e].obj = all_object;
                             }
                             resEvents.push(all_events[e]);
                         }
@@ -80,13 +93,92 @@ router.post('/', function(req, res) {
         eventDB.child(key).child("theme").set(req.body.theme);
     if(req.body.prix)
         eventDB.child(key).child("prix").set(req.body.prix);
-    if(req.body.obj)
-        eventDB.child(key).child("obj").set(req.body.obj);
+    if(req.body.obj){
+        var objets = req.body.obj;
+        for(var i = 0; i<objets.length; i++){
+            eventDB.child(key).child("obj").child(objets[i].obj).set(false);
+        }
+    }
 
+    // Add l'évent au groupe et au user
     groupDB.child(groupId).child("events").child(key).set(true);
     userDB.child(uid).child("events").child(key).set(true);
 
-    groupDB.child(key).once("value", function(group){
+    // renvoie tous les events et le user
+    groupDB.child(groupId).once("value", function(group){
+        userDB.once('value', function(users) {
+            eventDB.once("value", function (events) {
+
+                var all_users = users.val();
+                var my_user = all_users[uid];
+                var my_group = group.val();
+                var resEvents = [];
+                var all_events = events.val();
+
+                if (my_group && all_events && my_group.events) {
+                    // Récupère les events du group
+                    for (var e in my_group.events) {
+                        if (all_events[e]) {
+                            // Récupère les participants s'il y en a
+                            var participants = all_events[e].participants;
+                            if(participants){
+                                var all_participants = [];
+                                Object.keys(participants).forEach(function(k){
+                                    all_participants.push(all_users[k]);
+                                    notifEventsDB.child(all_users[k].uid).child(key).set("created");
+                                });
+                                all_events[e].participantsValues = all_participants;
+                            }
+                            // Récupre les objects de l'évent s'il y en a
+                            var eventObj = all_events[e].obj;
+                            if(eventObj){
+                                var all_object = [];
+                                Object.keys(eventObj).forEach(function(key){
+                                   all_object.push(key);
+                                });
+                                all_events[e].obj = all_object;
+                            }
+                            resEvents.push(all_events[e]);
+                        }
+                    }
+                }
+                var result = {
+                    "user": my_user,
+                    "events": resEvents
+                };
+                res.send(result);
+            });
+        });
+
+    });
+});
+
+/**
+ * Modifier un event et le renvoie
+ */
+router.post('/edit', function(req, res) {
+
+    var key = req.body.id;
+    var uid = req.body.userId;
+    var groupId = req.body.groupId;
+
+    eventDB.child(key).child("nom").set(req.body.nom);
+    eventDB.child(key).child("description").set(req.body.description);
+    eventDB.child(key).child("photoURL").set(req.body.photoURL);
+    if(req.body.dateDebutNew != null && req.body.dateFinNew != null ){
+        eventDB.child(key).child("dateDebut").set(req.body.dateDebutNew);
+        eventDB.child(key).child("dateFin").set(req.body.dateFinNew);
+    }
+    // OPTIONNELS
+    if(req.body.theme)
+        eventDB.child(key).child("theme").set(req.body.theme);
+    if(req.body.prix)
+        eventDB.child(key).child("prix").set(req.body.prix);
+    if(req.body.obj)
+        eventDB.child(key).child("obj").set(req.body.obj);
+
+    // RENVOIE
+    groupDB.child(groupId).once("value", function(group){
         userDB.once('value', function(users) {
             eventDB.once("value", function (events) {
                 var all_users = users.val();
@@ -103,6 +195,7 @@ router.post('/', function(req, res) {
                                 var all_participants = [];
                                 Object.keys(participants).forEach(function(k){
                                     all_participants.push(all_users[k]);
+                                    notifEventsDB.child(all_users[k].uid).child(key).set("modified");
                                 });
                                 all_events[e].participantsValues = all_participants;
                             }
@@ -324,5 +417,25 @@ router.get('/:uid', function(req, res){
 
 });
 
+/**
+ * Envoie un rappel à tous les utilisateurs
+ */
+router.post('/rappel', function(req, res){
+
+   var idEvent = req.body.idEvent;
+
+   eventDB.child(idEvent).once("value", function(event){
+      var my_event = event.val();
+
+      if(my_event.participants){
+          Object.keys(my_event.participants).forEach(function(k){
+             notifEventsDB.child(k).child(my_event.id).set("rappel");
+          });
+      }
+
+      res.send({message: "OK"});
+   });
+
+});
 
 module.exports = router;

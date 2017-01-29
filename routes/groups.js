@@ -58,8 +58,9 @@ router.post('/', function(req, res) {
     groupDB.child(key).child("membres").child(uid).set(true);
     userDB.child(uid).child("groups").child(key).set(true);
 
-    key = key.replace(/-|_/g, "").toLowerCase();
     /*
+    key = key.replace(/-|_/g, "").toLowerCase();
+
     // Créer le compte du groupe + ajout du user
     var params = {
         "name" : req.body.nom,
@@ -87,6 +88,44 @@ router.post('/', function(req, res) {
             });
     });
     */
+
+    // Renvoie le user et ses groupes
+    userDB.child(uid).once('value', function(user){
+        groupDB.once('value', function(groups){
+            var all_groups = groups.val();
+            var groupsRes = [];
+            if(all_groups){
+                var my_user = user.val();
+                if(my_user){
+                    if(my_user.groups){
+                        for(var g in my_user.groups){
+                            if(all_groups[g]){
+                                groupsRes.push(all_groups[g]);
+                            }
+                        }
+                    }
+                }
+            }
+            var result = {
+                "user" : my_user,
+                "groups" : groupsRes
+            };
+            res.send(result);
+        });
+    });
+});
+
+/**
+ * Modifier un groupe et le renvoie avec le user
+ */
+router.post('/edit', function(req, res) {
+
+    var key = req.body.id;
+    var uid = req.body.uid;
+
+    groupDB.child(key).child("nom").set(req.body.nom);
+    groupDB.child(key).child("description").set(req.body.description);
+    groupDB.child(key).child("photoURL").set(req.body.photoURL);
 
     // Renvoie le user et ses groupes
     userDB.child(uid).once('value', function(user){
