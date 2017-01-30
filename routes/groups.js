@@ -58,8 +58,10 @@ router.post('/', function(req, res) {
     groupDB.child(key).child("membres").child(uid).set(true);
     userDB.child(uid).child("groups").child(key).set(true);
 
-    /*
+    console.log(req.body.email);
+
     key = key.replace(/-|_/g, "").toLowerCase();
+    console.log(key);
 
     // Créer le compte du groupe + ajout du user
     var params = {
@@ -87,7 +89,7 @@ router.post('/', function(req, res) {
                 console.log('Successful!  Server responded with:', body);
             });
     });
-    */
+
 
     // Renvoie le user et ses groupes
     userDB.child(uid).once('value', function(user){
