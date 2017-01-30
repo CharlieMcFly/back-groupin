@@ -3,6 +3,7 @@
  */
 var express = require('express');
 var router = express.Router();
+var request = require('request');
 var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
 var notifiAmisDB = database.ref().child('notifications').child('amis');
@@ -11,6 +12,7 @@ var notifiEventsDB = database.ref().child('notifications').child('events');
 var userDB = database.ref().child('users');
 var groupDB = database.ref().child('groups');
 var eventDB = database.ref().child('events');
+var notifs = "https://platine-groupin.herokuapp.com/notifications";
 
 /// AMIS ///
 
@@ -87,7 +89,6 @@ router.get('/:uid', function(req, res){
                                 if(nEvents){
                                     Object.keys(nEvents).forEach(function(e){
                                         if(all_events[e]){
-                                            console.log(nEvents[e]);
                                             if(nEvents[e] == "created")
                                                 all_events[e].create = true;
                                             else if (nEvents[e] == "modified")
@@ -121,57 +122,14 @@ router.delete('/users/:uid/friends/:ami', function(req, res){
     notifiAmisDB.child(req.params.uid).child(req.params.ami).remove();
     notifiAmisDB.child(req.params.ami).child(req.params.uid).remove();
 
-    eventDB.once("value", function(events){
-        groupDB.once("value", function(groups){
-            userDB.once("value", function(users){
-                notifiAmisDB.child(uid).once('value', function(namis){
-                    notifiEventsDB.child(uid).once('value', function(nevents){
-                        notifiGroupesDB.child(uid).once('value', function(ngroups) {
-                            var nAmis = namis.val();
-                            var nGroupes = ngroups.val();
-                            var nEvents = nevents.val();
-                            var all_events = events.val();
-                            var all_users = users.val();
-                            var all_groups = groups.val();
-
-                            var my_user = all_users[uid];
-                            var tabNotifAmis = [];
-                            var tabNotifGroupes = [];
-                            var tabNotifEvents = [];
-
-                            if(all_users && all_groups){
-                                if(nAmis){
-                                    Object.keys(nAmis).forEach(function(a){
-                                        if(all_users[a])
-                                            tabNotifAmis.push(all_users[a]);
-                                    })
-                                }
-                                if(nGroupes){
-                                    Object.keys(nGroupes).forEach(function(g){
-                                        if(all_groups[g])
-                                            tabNotifGroupes.push(all_groups[g]);
-                                    })
-                                }
-                                if(nEvents){
-                                    Object.keys(nEvents).forEach(function(e){
-                                        if(all_events[e])
-                                            tabNotifEvents.push(all_events[e]);
-                                    })
-                                }
-                            }
-                            var n = {
-                                "user" : my_user,
-                                "notifsAmis" : tabNotifAmis,
-                                "notifsGroupes" : tabNotifGroupes,
-                                "notifsEvents" : tabNotifEvents
-                            };
-                            res.send(n);
-                        });
-                    });
-                });
-            });
-        });
+    // renvoie les notifications et le user
+    request.get(notifs + "/" + req.params.uid, function optionalCallback(err, httpResponse, body) {
+        if (err) {
+            return console.error('upload failed:', err);
+        }
+        res.send(JSON.parse(body));
     });
+
 });
 
 
@@ -206,57 +164,13 @@ router.delete('/users/:uid/groups/:idgroup', function(req, res){
     notifiGroupesDB.child(uid).child(groupid).remove();
     notifiGroupesDB.child(groupid).child(uid).remove();
 
-    eventDB.once("value", function(events){
-        groupDB.once("value", function(groups){
-            userDB.once("value", function(users){
-                notifiAmisDB.child(uid).once('value', function(namis){
-                    notifiEventsDB.child(uid).once('value', function(nevents){
-                        notifiGroupesDB.child(uid).once('value', function(ngroups) {
-                            var nAmis = namis.val();
-                            var nGroupes = ngroups.val();
-                            var nEvents = nevents.val();
-                            var all_events = events.val();
-                            var all_users = users.val();
-                            var all_groups = groups.val();
-
-                            var my_user = all_users[uid];
-                            var tabNotifAmis = [];
-                            var tabNotifGroupes = [];
-                            var tabNotifEvents = [];
-
-                            if(all_users && all_groups){
-                                if(nAmis){
-                                    Object.keys(nAmis).forEach(function(a){
-                                        if(all_users[a])
-                                            tabNotifAmis.push(all_users[a]);
-                                    })
-                                }
-                                if(nGroupes){
-                                    Object.keys(nGroupes).forEach(function(g){
-                                        if(all_groups[g])
-                                            tabNotifGroupes.push(all_groups[g]);
-                                    })
-                                }
-                                if(nEvents){
-                                    Object.keys(nEvents).forEach(function(e){
-                                        if(all_events[e])
-                                            tabNotifEvents.push(all_events[e]);
-                                    })
-                                }
-                            }
-                            var n = {
-                                "user" : my_user,
-                                "notifsAmis" : tabNotifAmis,
-                                "notifsGroupes" : tabNotifGroupes,
-                                "notifsEvents" : tabNotifEvents
-                            };
-                            res.send(n);
-                        });
-                    });
-                });
-            });
+    // renvoie les notifications et le user
+        request.get(notifs + "/" + req.params.uid, function optionalCallback(err, httpResponse, body) {
+            if (err) {
+                return console.error('upload failed:', err);
+            }
+            res.send(JSON.parse(body));
         });
-    });
 
 
 });
