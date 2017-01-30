@@ -8,8 +8,7 @@ var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
 var userDB = database.ref().child('users');
 var groupDB = database.ref().child('groups');
-
-// ALL OK NEED TESTS 4/01/2017
+var group = "https://platine-groupin.herokuapp.com/groups";
 
 /**
  * Renvoie les groupes d'un utilisateur
@@ -90,31 +89,14 @@ router.post('/', function(req, res) {
             });
     });
 
-
     // Renvoie le user et ses groupes
-    userDB.child(uid).once('value', function(user){
-        groupDB.once('value', function(groups){
-            var all_groups = groups.val();
-            var groupsRes = [];
-            if(all_groups){
-                var my_user = user.val();
-                if(my_user){
-                    if(my_user.groups){
-                        for(var g in my_user.groups){
-                            if(all_groups[g]){
-                                groupsRes.push(all_groups[g]);
-                            }
-                        }
-                    }
-                }
-            }
-            var result = {
-                "user" : my_user,
-                "groups" : groupsRes
-            };
-            res.send(result);
-        });
+    request.get(group + "/" + uid, function optionalCallback(err, httpResponse, body) {
+        if (err) {
+            return console.error('upload failed:', err);
+        }
+        res.send(JSON.parse(body));
     });
+
 });
 
 /**
@@ -130,34 +112,17 @@ router.post('/edit', function(req, res) {
     groupDB.child(key).child("photoURL").set(req.body.photoURL);
 
     // Renvoie le user et ses groupes
-    userDB.child(uid).once('value', function(user){
-        groupDB.once('value', function(groups){
-            var all_groups = groups.val();
-            var groupsRes = [];
-            if(all_groups){
-                var my_user = user.val();
-                if(my_user){
-                    if(my_user.groups){
-                        for(var g in my_user.groups){
-                            if(all_groups[g]){
-                                groupsRes.push(all_groups[g]);
-                            }
-                        }
-                    }
-                }
-            }
-            var result = {
-                "user" : my_user,
-                "groups" : groupsRes
-            };
-            res.send(result);
-        });
+    request.get(group + "/" + uid, function optionalCallback(err, httpResponse, body) {
+        if (err) {
+            return console.error('upload failed:', err);
+        }
+        res.send(JSON.parse(body));
     });
 });
 
 /**
  * Ajouter une photo au groupe
- */
+ *
 router.post('/photo', function(req, res){
 
     var idgroup = req.body.key;
@@ -185,7 +150,7 @@ router.post('/photo', function(req, res){
 
 
 });
-
+*/
 
 
 
