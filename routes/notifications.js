@@ -49,6 +49,37 @@ router.post('/events', function(req, res){
 
 });
 
+
+/**
+ * Participate an event & return notifs
+ */
+router.post('/events/participate', function(req, res){
+
+    var uid = req.body.uid;
+    var eventid = req.body.event;
+    var participe = req.body.participe;
+
+    if(participe){
+        eventDB.child(eventid).child('participants').child(uid).set(participe);
+        userDB.child(uid).child('events').child(eventid).set(participe);
+    }
+    else{
+        eventDB.child(eventid).child('participants').child(uid).remove();
+        userDB.child(uid).child('events').child(eventid).remove();
+    }
+
+    notifiEventsDB.child(uid).child(eventid).remove();
+
+    // renvoie les notifications et le user
+    request.get(notifs + "/" + req.params.uid, function optionalCallback(err, httpResponse, body) {
+        if (err) {
+            return console.error('upload failed:', err);
+        }
+        res.send(JSON.parse(body));
+    });
+
+});
+
 /**
  * Récupération des notifications d'une personne
  */
@@ -121,6 +152,23 @@ router.get('/:uid', function(req, res){
 router.delete('/users/:uid/friends/:ami', function(req, res){
     notifiAmisDB.child(req.params.uid).child(req.params.ami).remove();
     notifiAmisDB.child(req.params.ami).child(req.params.uid).remove();
+
+    // renvoie les notifications et le user
+    request.get(notifs + "/" + req.params.uid, function optionalCallback(err, httpResponse, body) {
+        if (err) {
+            return console.error('upload failed:', err);
+        }
+        res.send(JSON.parse(body));
+    });
+
+});
+
+/**
+ * Suppression d''un notification event
+ */
+router.delete('/users/:uid/event/:id', function(req, res){
+
+    notifiEventsDB.child(req.params.uid).child(req.params.id).remove();
 
     // renvoie les notifications et le user
     request.get(notifs + "/" + req.params.uid, function optionalCallback(err, httpResponse, body) {
