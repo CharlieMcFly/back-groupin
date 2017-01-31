@@ -4,6 +4,7 @@
 var express = require('express');
 var router = express.Router();
 var firebase = require('../firebase/firebase.js');
+var request = require('request');
 var database = firebase.database();
 var eventDB = database.ref().child('events');
 var groupDB = database.ref().child('groups');
