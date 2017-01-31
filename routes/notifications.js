@@ -154,7 +154,7 @@ router.post('/groups', function(req, res){
 
 
 /**
- * Suppression d'une notification une fois valider
+ * Suppression d'une notification de groupe
  */
 router.delete('/users/:uid/groups/:idgroup', function(req, res){
 
@@ -165,12 +165,12 @@ router.delete('/users/:uid/groups/:idgroup', function(req, res){
     notifiGroupesDB.child(groupid).child(uid).remove();
 
     // renvoie les notifications et le user
-        request.get(notifs + "/" + req.params.uid, function optionalCallback(err, httpResponse, body) {
-            if (err) {
-                return console.error('upload failed:', err);
-            }
-            res.send(JSON.parse(body));
-        });
+    request.get(notifs + "/" + req.params.uid, function optionalCallback(err, httpResponse, body) {
+        if (err) {
+            return console.error('upload failed:', err);
+        }
+        res.send(JSON.parse(body));
+    });
 
 
 });

@@ -31,6 +31,7 @@ router.get('/:uid', function(req, res){
                 }
             }
             var result = {
+                "user" : my_user,
                 "groups" : groupsRes
             };
             res.send(result);
@@ -43,13 +44,11 @@ router.get('/:uid', function(req, res){
  */
 router.post('/', function(req, res) {
 
-    var key = req.body.id;
     var uid = req.body.uid;
 
-    if (key == undefined){
-        key = groupDB.push().key;
-        groupDB.child(key).child("id").set(key);
-    }
+    var key = groupDB.push().key;
+    groupDB.child(key).child("id").set(key);
+
 
     groupDB.child(key).child("nom").set(req.body.nom);
     groupDB.child(key).child("description").set(req.body.description);
@@ -57,10 +56,7 @@ router.post('/', function(req, res) {
     groupDB.child(key).child("membres").child(uid).set(true);
     userDB.child(uid).child("groups").child(key).set(true);
 
-    console.log(req.body.email);
-
     key = key.replace(/-|_/g, "").toLowerCase();
-    console.log(key);
 
     // Créer le compte du groupe + ajout du user
     var params = {
@@ -111,47 +107,16 @@ router.post('/edit', function(req, res) {
     groupDB.child(key).child("description").set(req.body.description);
     groupDB.child(key).child("photoURL").set(req.body.photoURL);
 
+    console.log(uid);
+
     // Renvoie le user et ses groupes
-    request.get(group + "/" + uid, function optionalCallback(err, httpResponse, body) {
+    request.get( group + "/" + uid, function optionalCallback(err, httpResponse, body) {
         if (err) {
             return console.error('upload failed:', err);
         }
         res.send(JSON.parse(body));
     });
 });
-
-/**
- * Ajouter une photo au groupe
- *
-router.post('/photo', function(req, res){
-
-    var idgroup = req.body.key;
-    var url = req.body.url;
-
-    groupDB.child(idgroup).child("photos").once("value", function(photos){
-
-        var all_photo = photos.val();
-        if(all_photo){
-            var nbPhoto = Object.keys(all_photo).length;
-            groupDB.child(idgroup).child("photos").child(nbPhoto).set(url);
-        }else{
-            groupDB.child(idgroup).child("photos").child(0).set(url);
-        }
-
-    });
-
-
-    groupDB.child(idgroup).once("value", function(group){
-        var result = {
-           "group" : group.val()
-        };
-        res.send(result);
-    });
-
-
-});
-*/
-
 
 
 module.exports = router;

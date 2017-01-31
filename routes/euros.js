@@ -7,6 +7,7 @@ var router = express.Router();
 var firebase = require('../firebase/firebase.js');
 var database = firebase.database();
 var userDB = database.ref().child('users');
+var euro = "https://platine-groupin.herokuapp.com/euros";
 
 /**
  * Créer une bill pour un projet
@@ -63,8 +64,15 @@ router.post('/bills', function(req, res){
                 if (err) {
                     return console.error('upload failed:', err);
                 }
-                console.log('Successful!  Server responded with:', body);
-                res.send({message : "OK"});
+
+                request.get(euro + "/"+id+"/bills" , function optionalCallback(err, httpResponse, body) {
+                    if (err) {
+                        return console.error('upload failed:', err);
+                    }
+                    res.send(JSON.parse(body));
+
+                });
+
             });
         });
 
@@ -187,7 +195,16 @@ router.delete('/:id/bills/:idb', function(req, res){
             return console.error('upload failed:', err);
         }
         console.log('Successful!  Server responded with:', body);
-        res.send({message : "OK"});
+
+        request.get(euro + "/"+id+"/bills" , function optionalCallback(err, httpResponse, body) {
+            if (err) {
+                return console.error('upload failed:', err);
+            }
+            res.send(JSON.parse(body));
+
+        });
+
+
     });
 });
 

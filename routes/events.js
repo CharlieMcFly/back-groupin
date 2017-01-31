@@ -73,16 +73,12 @@ router.get('/users/:uid/groups/:key', function(req, res){
  */
 router.post('/', function(req, res) {
 
-    var key = req.body.id;
     var uid = req.body.userId;
     var groupId = req.body.groupId;
+    var key = eventDB.push().key;
 
-    if (key == undefined){
-        key = eventDB.push().key;
-        eventDB.child(key).child("id").set(key);
-        eventDB.child(key).child("participants").child(uid).set(true);
-    }
-
+    eventDB.child(key).child("id").set(key);
+    eventDB.child(key).child("participants").child(uid).set(true);
     eventDB.child(key).child("nom").set(req.body.nom);
     eventDB.child(key).child("createur").set(uid);
     eventDB.child(key).child("description").set(req.body.description);
@@ -128,17 +124,29 @@ router.post('/edit', function(req, res) {
     eventDB.child(key).child("nom").set(req.body.nom);
     eventDB.child(key).child("description").set(req.body.description);
     eventDB.child(key).child("photoURL").set(req.body.photoURL);
-    if(req.body.dateDebutNew != null && req.body.dateFinNew != null ){
-        eventDB.child(key).child("dateDebut").set(req.body.dateDebutNew);
-        eventDB.child(key).child("dateFin").set(req.body.dateFinNew);
-    }
+    eventDB.child(key).child("dateDebut").set(req.body.dateDebut);
+    eventDB.child(key).child("dateFin").set(req.body.dateFin);
+
     // OPTIONNELS
     if(req.body.theme)
         eventDB.child(key).child("theme").set(req.body.theme);
     if(req.body.prix)
         eventDB.child(key).child("prix").set(req.body.prix);
-    if(req.body.obj)
-        eventDB.child(key).child("obj").set(req.body.obj);
+    if(req.body.obj){
+        var objets = req.body.obj;
+        eventDB.child(key).child("obj").remove();
+        for(var i = 0; i<objets.length; i++){
+            eventDB.child(key).child("obj").child(objets[i].obj).set(false);
+        }
+    }
+
+
+    var participants = req.body.participants;
+    if(participants){
+        Object.keys(participants).forEach(function(k){
+           notifEventsDB.child(k).child(key).set("modified");
+        });
+    }
 
     // renvoie tous les events et le user
     request.get(event + "/users/"+uid+"/groups/"+ groupId, function optionalCallback(err, httpResponse, body) {
@@ -188,17 +196,17 @@ router.delete('/:key/groups/:groupid/users/:uid', function(req, res){
 router.post('/participants', function(req, res){
 
     var uid = req.body.uid;
-    var event = req.body.event;
+    var eventid = req.body.event;
     var participe = req.body.participe;
     var group = req.body.group;
 
     if(participe){
-        eventDB.child(event).child('participants').child(uid).set(participe);
-        userDB.child(uid).child('events').child(event).set(participe);
+        eventDB.child(eventid).child('participants').child(uid).set(participe);
+        userDB.child(uid).child('events').child(eventid).set(participe);
     }
     else{
-        eventDB.child(event).child('participants').child(uid).remove();
-        userDB.child(uid).child('events').child(event).remove();
+        eventDB.child(eventid).child('participants').child(uid).remove();
+        userDB.child(uid).child('events').child(eventid).remove();
     }
 
     // renvoie tous les events et le user
@@ -209,6 +217,30 @@ router.post('/participants', function(req, res){
         res.send(JSON.parse(body));
     });
 });
+
+/**
+ * Envoie un rappel à tous les utilisateurs
+ */
+router.post('/rappel', function(req, res){
+
+    var idEvent = req.body.idEvent;
+
+    eventDB.child(idEvent).once("value", function(event){
+        var my_event = event.val();
+
+        if(my_event.participants){
+            Object.keys(my_event.participants).forEach(function(k){
+                notifEventsDB.child(k).child(my_event.id).set("rappel");
+            });
+        }
+
+        res.send({message: "OK"});
+    });
+
+});
+
+
+// CALENDAR
 
 /**
  * Renvoie les events d'un utilisateur
@@ -300,25 +332,6 @@ router.get('/:uid', function(req, res){
 
 });
 
-/**
- * Envoie un rappel à tous les utilisateurs
- */
-router.post('/rappel', function(req, res){
 
-   var idEvent = req.body.idEvent;
-
-   eventDB.child(idEvent).once("value", function(event){
-      var my_event = event.val();
-
-      if(my_event.participants){
-          Object.keys(my_event.participants).forEach(function(k){
-             notifEventsDB.child(k).child(my_event.id).set("rappel");
-          });
-      }
-
-      res.send({message: "OK"});
-   });
-
-});
 
 module.exports = router;

@@ -9,6 +9,7 @@ var eventDB = database.ref().child('events');
 var groupDB = database.ref().child('groups');
 var userDB = database.ref().child('users');
 var chatDB = database.ref().child('chats');
+var chat = "https://platine-groupin.herokuapp.com/chats";
 
 /**
  * Récupérer le chat d'un groupe
@@ -76,38 +77,12 @@ router.post('/', function(req, res){
     chatDB.child(key).child("message").set(message);
     chatDB.child(key).child("date").set(firebase.database.ServerValue.TIMESTAMP);
 
-    groupDB.child(groupId).once("value", function(group){
-        userDB.once("value", function(users){
-            chatDB.once('value', function(msgs){
-                var all_messages = msgs.val();
-                var my_group = group.val();
-                var all_users = users.val();
-                var my_user = all_users[uid];
-                var tabMsg = [];
-                if(my_group){
-                    if(all_messages){
-                        if(my_group.messages){
-                            for(var m in my_group.messages){
-                                if(all_messages[m]){
-                                    if(all_users){
-                                        if(all_users[all_messages[m].auteur]){
-                                            all_messages[m].auteur = all_users[all_messages[m].auteur];
-                                        }
-                                    }
-                                    all_messages[m].date = new Date(all_messages[m].date).getTime();
-                                    tabMsg.push(all_messages[m]);
-                                }
-                            }
-                        }
-                    }
-                }
-                var result = {
-                    "user" : my_user,
-                    "messages" : tabMsg
-                };
-                res.send(result);
-            });
-        });
+    request.get(chat + "/users/"+uid+"/groups/"+groupId , function optionalCallback(err, httpResponse, body) {
+        if (err) {
+            return console.error('upload failed:', err);
+        }
+        res.send(JSON.parse(body));
+
     });
 });
 
