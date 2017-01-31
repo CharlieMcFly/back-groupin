@@ -183,7 +183,6 @@ router.delete('/:id/bills/:idb', function(req, res){
     var idb = req.params.idb;
 
     id = id.replace(/-|_/g, "").toLowerCase();
-    console.log(id);
 
     request.delete('https://ihatemoney.org/api/projects/'+id+'/bills/'+idb, {
         'auth': {

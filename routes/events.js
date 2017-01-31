@@ -98,6 +98,17 @@ router.post('/', function(req, res) {
         }
     }
 
+    groupDB.child(groupId).once("value", function(group){
+       var my_group = group.val();
+       if(my_group.membres){
+           Object.keys(my_group.membres).forEach(function(k){
+              notifEventsDB.child(k).child(key).set("created");
+           });
+       }
+
+
+    });
+
     // Add l'évent au groupe et au user
     groupDB.child(groupId).child("events").child(key).set(true);
     userDB.child(uid).child("events").child(key).set(true);
