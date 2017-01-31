@@ -55,8 +55,9 @@ subpath.get('/', function (req, res) {
 /* SWAGGER CONFIG */
 swagger.configureSwaggerPaths('', 'api-docs', '');
 
-var applicationUrl = 'http://localhost:8080/';
+var applicationUrl = 'https://platine-groupin.herokuapp.com/';
 swagger.configure(applicationUrl, '1.0.0');
+
 
 // uncomment after placing your favicon in /public
 app.use(logger('dev'));

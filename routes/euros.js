@@ -114,7 +114,7 @@ router.get('/:id/bills', function(req, res){
                 console.log('Successful! GET BILLS', bills);
                 var all_bills = JSON.parse(bills);
 
-                if(all_bills.length >0){
+                if(all_bills.length > 0){
                     for(var i = 0 ; i < all_bills.length; i++){
                         var tabUserBills = [];
                         var owers = all_bills[i].owers;
